@@ -282,6 +282,8 @@ function funnel(use){
   const max=rows[0]?rows[0].n:1;
   $('funnel').innerHTML=rows.map((r,j)=>`<div class="frow ${j===rows.length-1?'last':''}"><div class="lbl" title="${esc(r.p.loc)}"><b>${j?'+ ':''}P${pts.indexOf(r.p)+1}</b>${esc(r.p.label||r.p.loc)}</div><div class="bar"><i style="width:${Math.max(1,r.n/max*100)}%"></i></div><div class="n">${r.n}</div></div>`).join('');
 }
+// Média acima disso é impossível na estrada; abaixo, a velocidade só é mostrada
+const VMAX=200;
 function trip(r,use){
   if(!r){$('tripbox').hidden=true;return}
   $('tripbox').hidden=false;
@@ -293,8 +295,8 @@ function trip(r,use){
       let cls='',txt=`<span class="d">${dt}</span><span>de viagem</span>`;
       if(a.p.km!=null&&x.p.km!=null){const km=x.p.km-a.p.km;
         if(km===0){cls='stay';txt=`<span class="d">${dt}</span><span>parado no local</span>`}
-        else{const v=Math.round(Math.abs(km)/hrs);if(v>120)cls='fast';txt=`<span class="d">${dt}</span><span>${Math.abs(km)} km · ${v} km/h</span>`;
-          if(v>120)facts.push({a:1,t:`${v} km/h entre P${pts.indexOf(a.p)+1} e P${pts.indexOf(x.p)+1}: impossível, pode ser erro de leitura ou placa clonada`})}}
+        else{const v=Math.round(Math.abs(km)/hrs);if(v>VMAX)cls='fast';txt=`<span class="d">${dt}</span><span>${Math.abs(km)} km · ${v} km/h</span>`;
+          if(v>VMAX)facts.push({a:1,t:`${v} km/h entre P${pts.indexOf(a.p)+1} e P${pts.indexOf(x.p)+1}: nenhum carro faz isso. Pode ser erro de leitura ou placa clonada`})}}
       html+=`<div class="leg ${cls}">${txt}</div>`}
     html+=`<div class="tstop"><span class="p">P${pts.indexOf(x.p)+1}</span><span class="nm">${esc(x.p.label||'')}</span><span class="tm"><span class="dt">${fmt(x.d).split(" ")[0]}</span>${fmt(x.d).split(" ")[1]||""}</span><span class="lc">${esc(x.p.loc)}</span></div>`;
   });
