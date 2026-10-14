@@ -155,7 +155,7 @@ tr.sel td{background:color-mix(in srgb,var(--sign) 14%,transparent)}
 <section class="panel" aria-labelledby="s1">
   <p class="eyebrow" id="s1">1 · Pontos da rota</p>
   <div id="drop" tabindex="0" role="button" aria-label="Escolher arquivos CSV">
-    <div><strong>Escolha os CSVs</strong><span>Clique ou arraste os arquivos para cá. De 2 a 10 pontos, todos de uma vez.</span></div>
+    <div><strong>Escolha os CSVs</strong><span>Clique ou arraste os arquivos para cá. De 2 a 10 pontos. Duas consultas da mesma câmera com horários emendados viram um ponto só.</span></div>
     <div class="btns">
       <button class="btn ghost" id="demo" type="button">Usar exemplo (Caso 1)</button>
       <button class="btn ghost" id="clear" type="button" hidden>Limpar tudo</button>
@@ -173,6 +173,7 @@ tr.sel td{background:color-mix(in srgb,var(--sign) 14%,transparent)}
   <p class="eyebrow" id="s2">2 · Comparar</p>
   <div class="ctl">
     <label for="min">A placa precisa aparecer em <select id="min"></select></label>
+    <label class="sw" for="seq"><input type="checkbox" id="seq" checked> Exigir a ordem dos pontos (P1 antes de P2…)</label>
     <label class="sw" for="mask"><input type="checkbox" id="mask"> Esconder parte da placa ao projetar</label>
     <button class="btn go" id="go" type="button" disabled>Cruzar placas</button>
   </div>
@@ -181,7 +182,7 @@ tr.sel td{background:color-mix(in srgb,var(--sign) 14%,transparent)}
 <section class="panel" id="res" aria-labelledby="s3" hidden>
   <p class="eyebrow" id="s3">3 · Resultado</p>
   <div class="verdict" id="verdict"><div class="big" id="big"></div><div class="hint" id="hint"></div></div>
-  <div id="funnelbox"><p class="sub">Como a lista encolheu</p><p class="subhint">Cada ponto a mais tira da lista quem não passou por ele.</p><div class="funnel" id="funnel"></div></div>
+  <div id="funnelbox"><p class="sub">Como a lista encolheu</p><p class="subhint">Cada ponto a mais tira da lista quem não passou por ele, ou passou fora da ordem.</p><div class="funnel" id="funnel"></div></div>
   <div id="tripbox" hidden><p class="sub" id="triptitle">Trajeto da placa</p><p class="subhint" id="triphint">Clique em outra placa da tabela para ver o trajeto dela.</p><div class="tripwrap"><div class="trip" id="trip"></div></div><ul class="facts" id="facts"></ul></div>
   <p class="sub" id="tbltitle">Placas encontradas</p>
   <div class="tbl"><table id="tbl"></table></div>
@@ -238,14 +239,33 @@ function leaveDemo(){if(demoMode){demoMode=false;pts.length=0;$('story').hidden=
 function addText(name,text,meta){
   const rows=parse(text);
   if(!rows.length){note(`Não encontrei placas em ${name}.`);return}
-  if(pts.length>=10){note('Máximo de 10 pontos.');return}
   const cnt={}; rows.forEach(x=>cnt[x.l]=(cnt[x.l]||0)+1);
   const loc=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0]||name;
   const ds=rows.map(x=>x.d).filter(Boolean).sort(byTime);
-  const idx={}; rows.forEach(r=>{if(!idx[r.p]||byTime(r.d,idx[r.p].d)<0)idx[r.p]=r});
-  pts.push({name,rows,loc,label:meta?meta.label:'',km:meta?meta.km:null,from:ds[0]||'',to:ds[ds.length-1]||'',on:true,idx});
+  const from=ds[0]||'', to=ds[ds.length-1]||'';
+  // Mesma câmera e horários emendados (ex.: consulta até 23:59 + consulta a partir de 0:00) = um ponto só
+  const same=pts.find(p=>p.loc===loc&&ms(from)<=ms(p.to)+GAP&&ms(to)>=ms(p.from)-GAP);
+  if(same){
+    const seen=new Set(same.rows.map(r=>r.p+'|'+r.d));
+    rows.forEach(r=>{if(!seen.has(r.p+'|'+r.d))same.rows.push(r)});
+    same.files.push(name);
+    index(same);
+  }else{
+    if(pts.length>=10){note('Máximo de 10 pontos.');return}
+    const p={name,files:[name],rows,loc,label:meta?meta.label:'',km:meta?meta.km:null,on:true};
+    index(p); pts.push(p);
+  }
   pts.sort((a,b)=>byTime(a.from,b.from));
   draw();
+}
+// Até 10 min de intervalo entre duas consultas da mesma câmera ainda conta como uma janela só
+const GAP=10*60000;
+function index(p){
+  const ds=p.rows.map(x=>x.d).filter(Boolean).sort(byTime);
+  p.from=ds[0]||''; p.to=ds[ds.length-1]||'';
+  p.idx={}; p.all={};
+  p.rows.forEach(r=>{if(!p.idx[r.p]||byTime(r.d,p.idx[r.p].d)<0)p.idx[r.p]=r;(p.all[r.p]=p.all[r.p]||[]).push(r.d)});
+  Object.values(p.all).forEach(a=>a.sort(byTime));
 }
 function add(files){
   [...files].forEach(f=>{const r=new FileReader();r.onload=()=>addText(f.name,r.result);r.readAsText(f,'ISO-8859-1')});
@@ -255,7 +275,7 @@ function draw(){
   $('pts').innerHTML=pts.map((p,i)=>`<li class="stop ${p.on?'':'off'}">
     <span class="km">P${i+1}</span>
     <div class="info"><div class="loc">${p.label?`<span style="color:var(--road)">${esc(p.label)}</span> · `:""}${esc(p.loc)}</div>
-    <div class="meta"><b>${fmt(p.from)}</b> até <b>${fmt(p.to)}</b> · ${p.rows.length.toLocaleString('pt-BR')} passagens · ${Object.keys(p.idx).length.toLocaleString('pt-BR')} placas</div></div>
+    <div class="meta"><b>${fmt(p.from)}</b> até <b>${fmt(p.to)}</b> · ${p.rows.length.toLocaleString('pt-BR')} passagens · ${Object.keys(p.idx).length.toLocaleString('pt-BR')} placas${p.files.length>1?` · <b>${p.files.length} consultas emendadas</b>`:''}</div></div>
     <div class="acts"><button class="btn" type="button" onclick="tog(${i})">${p.on?'Não usar':'Usar'}</button><button class="btn" type="button" onclick="del(${i})" aria-label="Remover P${i+1}">Remover</button></div></li>`).join('');
   const n=pts.filter(p=>p.on).length, sel=$('min'), prev=sel.value;
   sel.innerHTML='';
@@ -272,13 +292,30 @@ function show(p){return $('mask').checked?p.slice(0,3)+'••••':p}
 function plate(p){return `<span class="plate"><span class="band">BRASIL</span><span class="num">${esc(show(p))}</span></span>`}
 $('min').onchange=()=>{userMin=true};
 $('mask').onchange=()=>{if(!$('res').hidden)run()};
+$('seq').onchange=()=>{if(!$('res').hidden)run()};
 $('go').onclick=run;
 
 function ms(d){const k=sk(d);const m=k.match(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})$/);return m?Date.UTC(+m[1],m[2]-1,+m[3],+m[4],+m[5]):NaN}
 function dur(a,b){const t=Math.round((ms(b)-ms(a))/60000);if(isNaN(t))return '';const h=Math.floor(t/60),m=t%60;return `${h}h${String(m).padStart(2,'0')}`}
-function funnel(use){
-  let cur=null; const rows=[];
-  use.forEach((p,i)=>{const ks=new Set(Object.keys(p.idx));cur=cur?new Set([...cur].filter(x=>ks.has(x))):ks;rows.push({p,n:cur.size,i})});
+// Percorre os pontos na ordem e pega, em cada um, a primeira passagem depois da anterior.
+// Sem a regra de ordem, vale a primeira passagem de cada ponto.
+function chain(pl,use,seq){
+  let t=-Infinity, n=0, broke=-1; const info=[];
+  use.forEach((p,i)=>{
+    const a=p.all[pl]; let d='';
+    if(a){d=seq?(a.find(x=>ms(x)>=t)||''):a[0]; if(!d&&broke<0)broke=i}
+    else if(broke<0)broke=i;
+    if(d){n++; if(seq)t=ms(d)}
+    info.push(d);
+  });
+  return {n,info,full:broke<0};
+}
+function funnel(use,seq){
+  const rows=[]; let cur=Object.keys(use[0].idx);
+  use.forEach((p,i)=>{
+    if(i) cur=cur.filter(pl=>{const a=p.all[pl];if(!a)return false;if(!seq)return true;return chain(pl,use.slice(0,i+1),true).full});
+    rows.push({p,n:cur.length,i});
+  });
   const max=rows[0]?rows[0].n:1;
   $('funnel').innerHTML=rows.map((r,j)=>`<div class="frow ${j===rows.length-1?'last':''}"><div class="lbl" title="${esc(r.p.loc)}"><b>${j?'+ ':''}P${pts.indexOf(r.p)+1}</b>${esc(r.p.label||r.p.loc)}</div><div class="bar"><i style="width:${Math.max(1,r.n/max*100)}%"></i></div><div class="n">${r.n}</div></div>`).join('');
 }
@@ -311,31 +348,36 @@ function trip(r,use){
 }
 function pick(pl){selPlate=pl;run()}
 function run(){
-  const use=pts.filter(p=>p.on), min=+$('min').value;
+  const use=pts.filter(p=>p.on), min=+$('min').value, seq=$('seq').checked;
   const count={};
   use.forEach(p=>Object.keys(p.idx).forEach(pl=>count[pl]=(count[pl]||0)+1));
-  const hits=Object.keys(count).filter(pl=>count[pl]>=min).sort((a,b)=>count[b]-count[a]||a.localeCompare(b));
+  const cand=Object.keys(count).filter(pl=>count[pl]>=min);
+  const ch={}; cand.forEach(pl=>ch[pl]=chain(pl,use,seq));
+  const hits=cand.filter(pl=>ch[pl].n>=min).sort((a,b)=>ch[b].n-ch[a].n||a.localeCompare(b));
+  const outOfOrder=cand.length-hits.length;
   last=hits.map(pl=>{
-    const info=use.map(p=>p.idx[pl]?p.idx[pl].d:'');
     const any=use.map(p=>p.idx[pl]).find(Boolean);
-    return {pl,n:count[pl],m:any.m,u:any.u,c:any.c,info};
+    return {pl,n:ch[pl].n,m:any.m,u:any.u,c:any.c,info:ch[pl].info};
   });
   $('res').hidden=false;
   const v=$('verdict');
   v.className='verdict '+(hits.length?'some':'zero');
   $('big').textContent=hits.length===0?'Nenhuma placa em comum':`${hits.length} placa${hits.length>1?'s':''} em comum`;
   $('hint').innerHTML=hits.length===0
-    ? 'Antes de concluir, confira:<ul class="checks"><li>O ponto está vivo?</li><li>O sentido está certo?</li><li>As janelas se encontram?</li><li>Fuso: MS tem 1 hora a menos</li></ul>Se tudo estiver certo, o zero é verdadeiro.'
+    ? 'Antes de concluir, confira:<ul class="checks"><li>O ponto está vivo?</li><li>O sentido está certo?</li><li>A janela dá tempo de o carro chegar? Se passa da meia-noite, carregue as duas consultas da câmera.</li><li>Fuso: o Córtex usa a hora de Brasília em todos os pontos</li></ul>Sem alvo naquele dia, zero é o normal.'
     : (hits.length>30?'Lista grande. Acrescente mais um ponto ou aperte a janela de horário.':'Agora qualifique cada placa: dono, quem dirige, locadora, passagens e outras consultas.');
   const head='<tr><th>#</th><th>Placa</th><th>Veículo</th><th>UF</th><th>Pontos</th>'+use.map(p=>`<th title="${esc(p.loc)}">P${pts.indexOf(p)+1}</th>`).join('')+'</tr>';
   $('tbl').innerHTML=hits.length?head+last.slice(0,500).map((r,i)=>`<tr class="pick" data-pl="${esc(r.pl)}" tabindex="0"><td>${i+1}</td><td>${plate(r.pl)}</td><td>${esc(r.m)}${r.c?' · '+esc(r.c):''}</td><td>${esc(r.u)}</td><td><span class="hits" title="${r.n} de ${use.length}">${r.info.map(d=>`<i class="${d?'on':''}"></i>`).join('')}</span> ${r.n}/${use.length}</td>${r.info.map(d=>d?`<td class="t">${fmt(d)}</td>`:'<td class="miss">—</td>').join('')}</tr>`).join(''):'';
   $('exp').hidden=!hits.length;
-  funnel(use);
+  funnel(use,seq);
   const chosen=last.find(r=>r.pl===selPlate)||last[0];
   trip(chosen,use);
   $('tbltitle').hidden=!hits.length;
   document.querySelectorAll('#tbl tr[data-pl]').forEach(tr=>{tr.classList.toggle('sel',chosen&&tr.dataset.pl===chosen.pl);tr.onclick=()=>pick(tr.dataset.pl)});
-  note(hits.length>500?`Mostrando as primeiras 500 de ${hits.length}. O CSV baixado traz todas.`:'');
+  const msg=[];
+  if(seq&&outOfOrder) msg.push(outOfOrder>1?`${outOfOrder} placas passaram nos pontos, mas fora da ordem, e ficaram fora da lista.`:'1 placa passou nos pontos, mas fora da ordem, e ficou fora da lista.');
+  if(hits.length>500) msg.push(`Mostrando as primeiras 500 de ${hits.length}. O CSV baixado traz todas.`);
+  note(msg.join(' '));
 }
 $('exp').onclick=()=>{
   const use=pts.filter(p=>p.on);
