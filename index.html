@@ -7,155 +7,204 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
-/* Layout: uma coluna de painel operacional; a rota aparece como uma estrada com marcos P1→Pn, o resultado como placas Mercosul. */
+/* Painel operacional: faixa escura de rodovia no topo, etapas numeradas como marcos, rota como estrada P1→Pn, resultado em placas Mercosul. */
 :root{
-  --bg:#e9edf2; --panel:#ffffff; --ink:#132033; --mut:#5a6878; --line:#d3dae3;
-  --road:#1b3a5c; --sign:#e3a008; --signink:#2a1d00;
-  --ok:#1f7a45; --okbg:#e3f3ea; --warn:#a85f00; --warnbg:#fdf0dc;
+  --bg:#eef1f5; --panel:#ffffff; --ink:#122033; --mut:#566577; --line:#d8dfe8; --soft:#f4f6f9;
+  --road:#1b3a5c; --hero:#0f2238; --heroink:#eef3f8; --heromut:#a9b8c9;
+  --sign:#e8a80c; --signink:#241900;
+  --ok:#1c7a44; --okbg:#e2f3e9; --warn:#a35800; --warnbg:#fdf0dc;
   --plate:#ffffff; --plateband:#123f8c; --plateink:#111;
+  --shadow:0 1px 2px rgba(16,32,51,.06),0 6px 20px rgba(16,32,51,.06);
   --f-disp:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
   --f-body:"IBM Plex Sans",Arial,Helvetica,sans-serif;
   --f-mono:"IBM Plex Mono",Menlo,Consolas,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0e1621; --panel:#162130; --ink:#e4ebf3; --mut:#93a2b4; --line:#2a394c;
-  --road:#8fb3dc; --sign:#f0b429; --signink:#2a1d00;
-  --ok:#5fcf8f; --okbg:#143323; --warn:#f2a94a; --warnbg:#3a2a12;
-  --plate:#f4f6f8; --plateband:#1d4fa8; --plateink:#111; color-scheme:dark}}
+  --bg:#0b131d; --panel:#131e2b; --ink:#e4ebf3; --mut:#93a2b4; --line:#26354a; --soft:#182536;
+  --road:#8fb3dc; --hero:#08111b; --heroink:#eef3f8; --heromut:#93a2b4;
+  --sign:#f0b429; --signink:#241900;
+  --ok:#5fcf8f; --okbg:#12301f; --warn:#f2a94a; --warnbg:#35260f;
+  --plate:#f4f6f8; --plateband:#1d4fa8; --plateink:#111;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0e1621; --panel:#162130; --ink:#e4ebf3; --mut:#93a2b4; --line:#2a394c;
-  --road:#8fb3dc; --sign:#f0b429; --signink:#2a1d00;
-  --ok:#5fcf8f; --okbg:#143323; --warn:#f2a94a; --warnbg:#3a2a12;
-  --plate:#f4f6f8; --plateband:#1d4fa8; --plateink:#111; color-scheme:dark}
+  --bg:#0b131d; --panel:#131e2b; --ink:#e4ebf3; --mut:#93a2b4; --line:#26354a; --soft:#182536;
+  --road:#8fb3dc; --hero:#08111b; --heroink:#eef3f8; --heromut:#93a2b4;
+  --sign:#f0b429; --signink:#241900;
+  --ok:#5fcf8f; --okbg:#12301f; --warn:#f2a94a; --warnbg:#35260f;
+  --plate:#f4f6f8; --plateband:#1d4fa8; --plateink:#111;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);padding:0 16px}
-.wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;display:grid;gap:20px}
-.wrap>*{min-width:0}
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body)}
+/* Topo: faixa de rodovia */
+.hero{background:var(--hero);color:var(--heroink);padding:0 16px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:repeating-linear-gradient(90deg,var(--sign) 0 44px,transparent 44px 76px);opacity:.9}
+.hero .in{max-width:1080px;margin:0 auto;padding-block:30px 34px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 28px}
 .brand{display:flex;align-items:center;gap:14px}
-.signbox{background:var(--sign);color:var(--signink);font:700 15px/1 var(--f-disp);letter-spacing:.06em;padding:8px 10px;border-radius:4px;border:2px solid var(--signink);text-transform:uppercase}
-h1{font:700 clamp(30px,5vw,44px)/1 var(--f-disp);margin:0;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance}
-.lede{margin:6px 0 0;color:var(--mut);max-width:62ch}
-.private{font-size:13px;color:var(--mut);display:flex;align-items:center;gap:6px}
-.private::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok)}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px}
-.eyebrow{font:600 13px/1 var(--f-disp);letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin:0 0 12px}
+.signbox{background:var(--sign);color:var(--signink);font:700 15px/1 var(--f-disp);letter-spacing:.06em;padding:8px 10px;border-radius:5px;border:2px solid var(--signink);text-transform:uppercase;box-shadow:0 0 0 2px var(--sign)}
+h1{font:700 clamp(32px,5.5vw,50px)/1 var(--f-disp);margin:0;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance}
+.lede{margin:10px 0 0;color:var(--heromut);max-width:58ch}
+.private{font-size:13px;color:var(--heroink);display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:6px 12px;background:rgba(255,255,255,.05)}
+.private::before{content:"";width:8px;height:8px;border-radius:50%;background:#5fcf8f;box-shadow:0 0 0 3px rgba(95,207,143,.2)}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 16px 64px;display:grid;gap:18px}
+.wrap>*{min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+.eyebrow{display:flex;align-items:center;gap:10px;font:700 15px/1 var(--f-disp);letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin:0 0 16px}
+.eyebrow .no{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--road);color:var(--panel);font-size:15px;letter-spacing:0}
+.eyebrow .ct{margin-left:auto;font:500 13px/1 var(--f-body);letter-spacing:0;text-transform:none;color:var(--mut)}
 /* Etapa 1 */
-#drop{border:2px dashed var(--line);border-radius:8px;padding:22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;cursor:pointer;transition:border-color .15s,background .15s}
+#drop{border:2px dashed var(--line);border-radius:12px;padding:22px;display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;cursor:pointer;background:var(--soft);transition:border-color .15s,background .15s}
 #drop:hover,#drop.over,#drop:focus-visible{border-color:var(--road);outline:none}
-#drop.over{background:color-mix(in srgb,var(--road) 8%,transparent)}
-#drop strong{font:600 22px/1.1 var(--f-disp);text-transform:uppercase;letter-spacing:.02em;display:block}
-#drop span{color:var(--mut);font-size:14px}
-.btn{font:600 15px/1 var(--f-body);border-radius:6px;padding:11px 16px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+#drop.over{background:color-mix(in srgb,var(--road) 10%,var(--panel))}
+.upi{flex:0 0 52px;height:52px;border-radius:12px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;color:var(--road)}
+.dtx{flex:1 1 260px;min-width:0}
+#drop strong{font:700 22px/1.1 var(--f-disp);text-transform:uppercase;letter-spacing:.02em;display:block;margin-bottom:2px}
+#drop .dtx span{color:var(--mut);font-size:14px}
+.btn{font:600 15px/1 var(--f-body);border-radius:8px;padding:11px 16px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink);transition:border-color .15s,background .15s}
 .btn:hover{border-color:var(--road)}
-.btn:focus-visible,select:focus-visible,input:focus-visible+label{outline:3px solid var(--sign);outline-offset:2px}
-.btn.go{background:var(--sign);color:var(--signink);border-color:var(--signink);font:700 18px/1 var(--f-disp);letter-spacing:.06em;text-transform:uppercase;padding:13px 26px}
-.btn.go:disabled{opacity:.4;cursor:default}
-.btn.ghost{background:transparent}
+.btn:focus-visible,select:focus-visible,.sw input:focus-visible{outline:3px solid var(--sign);outline-offset:2px}
+.btn.go{background:var(--sign);color:var(--signink);border-color:var(--signink);font:700 19px/1 var(--f-disp);letter-spacing:.06em;text-transform:uppercase;padding:14px 28px;box-shadow:0 2px 0 var(--signink)}
+.btn.go:active{transform:translateY(1px);box-shadow:none}
+.btn.go:disabled{opacity:.4;cursor:default;box-shadow:none}
 .btns{display:flex;flex-wrap:wrap;gap:10px}
 /* Rota */
-.route{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:0;position:relative}
+.route{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:0}
 .route:empty{display:none}
 .stop{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:10px 0;position:relative}
+.stop+.stop{border-top:1px solid var(--line)}
 .stop::before{content:"";position:absolute;left:21px;top:0;bottom:0;width:2px;background:repeating-linear-gradient(var(--road) 0 8px,transparent 8px 14px)}
 .stop:first-child::before{top:50%}.stop:last-child::before{bottom:50%}
 .stop:only-child::before{display:none}
-.km{position:relative;z-index:1;width:44px;height:44px;border-radius:6px;background:var(--road);color:var(--panel);display:grid;place-items:center;font:700 20px/1 var(--f-disp)}
+.km{position:relative;z-index:1;width:44px;height:44px;border-radius:8px;background:var(--road);color:var(--panel);display:grid;place-items:center;font:700 20px/1 var(--f-disp)}
 .stop.off .km{background:var(--line);color:var(--mut)}
 .stop.off .info{opacity:.5}
 .info{min-width:0}
-.loc{font-weight:600;overflow-wrap:anywhere}
-.meta{color:var(--mut);font-size:14px;font-variant-numeric:tabular-nums}
+.loc{display:grid;gap:1px}
+.loc .lab{font-weight:600;color:var(--ink)}
+.loc .cam{font:500 13px/1.35 var(--f-mono);color:var(--mut);overflow-wrap:anywhere}
+.loc .lab+.cam{margin-top:1px}
+.meta{color:var(--mut);font-size:13.5px;font-variant-numeric:tabular-nums;margin-top:3px}
+.meta .chip{margin-left:8px}
 .meta b{font-family:var(--f-mono);font-weight:500;color:var(--ink)}
-.acts{display:flex;gap:6px}
-.acts .btn{padding:7px 10px;font-size:13px}
+.chip{display:inline-flex;align-items:center;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:600;background:color-mix(in srgb,var(--sign) 18%,transparent);color:var(--ink)}
+.acts{display:flex;gap:4px}
+.acts .btn{padding:7px 10px;font-size:13px;background:transparent;border-color:transparent;color:var(--mut)}
+.acts .btn:hover{border-color:var(--line);color:var(--ink)}
 /* Etapa 2 */
-.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px}
-.ctl label{display:flex;align-items:center;gap:8px}
-select{font:500 15px var(--f-body);padding:9px 10px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
-.ctl .btn.go{margin-left:auto}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:16px 24px;align-items:center}
+.opts{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;min-width:0}
+.ctl label{display:flex;align-items:center;gap:10px}
+select{font:500 15px var(--f-body);padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.sw{cursor:pointer;font-size:15px}
+.sw input{appearance:none;-webkit-appearance:none;flex:0 0 40px;width:40px;height:24px;border-radius:99px;background:var(--line);position:relative;margin:0;cursor:pointer;transition:background .15s}
+.sw input::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:transform .15s}
+.sw input:checked{background:var(--ok)}
+.sw input:checked::after{transform:translateX(16px)}
 /* Resultado */
-.verdict{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;border-radius:8px;padding:16px 18px}
-.verdict.some{background:var(--okbg)}.verdict.zero{background:var(--warnbg)}
-.big{font:700 clamp(30px,6vw,46px)/1 var(--f-disp);text-transform:uppercase;font-variant-numeric:tabular-nums}
+.verdict{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;border-radius:12px;padding:18px 20px;border:1px solid transparent}
+.verdict.some{background:var(--okbg);border-color:color-mix(in srgb,var(--ok) 25%,transparent)}
+.verdict.zero{background:var(--warnbg);border-color:color-mix(in srgb,var(--warn) 25%,transparent)}
+.big{font:700 clamp(32px,6vw,50px)/1 var(--f-disp);text-transform:uppercase;font-variant-numeric:tabular-nums}
 .some .big{color:var(--ok)}.zero .big{color:var(--warn)}
-.hint{flex:1 1 280px;min-width:0}
-.checks{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;padding:0;list-style:none}
+.hint{flex:1 1 300px;min-width:0}
+.checks{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;padding:0;list-style:none}
 .checks li{border:1px solid var(--warn);color:var(--warn);border-radius:99px;padding:3px 10px;font-size:13px;font-weight:600}
-.tbl{overflow-x:auto;margin-top:16px}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
-th{font:600 13px/1.2 var(--f-disp);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
-td.t{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-td.miss{color:var(--line)}
-.hits{display:inline-flex;gap:3px}
-.hits i{width:9px;height:9px;border-radius:2px;background:var(--line)}
-.hits i.on{background:var(--ok)}
-/* Placa Mercosul */
-.plate{display:inline-grid;grid-template-rows:9px auto;width:104px;border:2px solid #222;border-radius:5px;background:var(--plate);overflow:hidden;vertical-align:middle}
-.plate .band{background:var(--plateband);color:#fff;font:600 7px/9px var(--f-body);letter-spacing:.2em;text-align:center}
-.plate .num{color:var(--plateink);font:700 22px/1.15 var(--f-disp);letter-spacing:.06em;text-align:center}
-.foot{margin-top:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;color:var(--mut);font-size:13px}
-.sw{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
-
-/* Caso de exemplo */
-.story{margin-top:16px;border-left:4px solid var(--sign);background:color-mix(in srgb,var(--sign) 10%,var(--panel));border-radius:0 8px 8px 0;padding:14px 16px}
-.story h3{margin:0 0 4px;font:700 20px/1.1 var(--f-disp);text-transform:uppercase;letter-spacing:.02em}
-.story p{margin:4px 0 0;max-width:70ch}
-.story .tagf{display:inline-block;font:600 12px/1 var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--mut);border:1px solid var(--line);border-radius:99px;padding:4px 8px;margin-left:8px;vertical-align:middle}
-.sub{font:700 18px/1.1 var(--f-disp);text-transform:uppercase;letter-spacing:.03em;margin:22px 0 4px}
-.subhint{color:var(--mut);font-size:14px;margin:0 0 10px}
+.block{margin-top:26px}
+.sub{font:700 19px/1.1 var(--f-disp);text-transform:uppercase;letter-spacing:.03em;margin:0 0 4px}
+.subhint{color:var(--mut);font-size:14px;margin:0 0 12px}
+.sub.block{margin-top:28px;margin-bottom:10px}
 /* Funil */
-.funnel{display:grid;gap:6px}
-.frow{display:grid;grid-template-columns:minmax(0,230px) 1fr 70px;gap:10px;align-items:center;font-size:14px}
+.funnel{display:grid;gap:8px}
+.frow{display:grid;grid-template-columns:minmax(0,230px) 1fr 60px;gap:12px;align-items:center;font-size:14px}
 .frow .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .frow .lbl b{font-family:var(--f-disp);font-size:16px;margin-right:6px}
-.bar{height:22px;background:color-mix(in srgb,var(--road) 12%,transparent);border-radius:4px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--road);border-radius:4px;min-width:3px;transition:width .5s}
+.bar{height:24px;background:var(--soft);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--road),color-mix(in srgb,var(--road) 75%,var(--panel)));border-radius:5px;min-width:4px;transition:width .5s}
 .frow.last .bar i{background:var(--ok)}
-.frow .n{font:600 16px/1 var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.frow .n{font:600 17px/1 var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.frow.last .n{color:var(--ok)}
 /* Trajeto */
 .tripwrap{overflow-x:auto;padding-bottom:4px}
 .trip{display:flex;align-items:stretch;gap:0;min-width:min-content}
-.tstop{border:1px solid var(--line);border-radius:8px;padding:10px 12px;flex:1 1 0;min-width:120px;max-width:210px;display:grid;gap:2px;align-content:start;background:var(--panel)}
+.tstop{border:1px solid var(--line);border-radius:10px;padding:12px;flex:1 1 0;min-width:118px;max-width:210px;display:grid;gap:2px;align-content:start;background:var(--soft)}
 .tstop .p{font:700 15px/1 var(--f-disp);color:var(--road)}
 .tstop .nm{font-weight:600;font-size:14px;line-height:1.25}
 .tstop .tm{font:500 24px/1.1 var(--f-mono);font-variant-numeric:tabular-nums}
 .tstop .tm .dt{display:block;font-size:13px;color:var(--mut)}
 .tstop .lc{font-size:12px;color:var(--mut);line-height:1.3}
-.leg{display:grid;align-content:center;justify-items:center;flex:0 0 96px;padding:0 4px;text-align:center;position:relative;font-size:13px;color:var(--mut)}
+.leg{display:grid;align-content:center;justify-items:center;flex:0 0 86px;padding:0 4px;text-align:center;position:relative;font-size:13px;color:var(--mut)}
 .leg::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:2px dashed var(--road);z-index:0}
 .leg span{position:relative;z-index:1;background:var(--panel);padding:2px 6px;border-radius:4px}
-.leg .d{font:700 16px/1.2 var(--f-disp);color:var(--ink)}
+.leg .d{font:700 17px/1.2 var(--f-disp);color:var(--ink)}
 .leg.stay::before{border-top:2px dotted var(--sign)}
 .leg.fast .d{color:var(--warn)}
-.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;padding:0;list-style:none}
-.facts li{border-radius:6px;padding:6px 10px;font-size:14px;background:color-mix(in srgb,var(--road) 10%,transparent)}
-.facts li.alert{background:var(--warnbg);color:var(--warn);font-weight:600}
+@media (max-width:640px){
+  .tripwrap{overflow:visible}
+  .trip{flex-direction:column;min-width:0}
+  .tstop{max-width:none;grid-template-columns:auto 1fr;column-gap:12px}
+  .tstop .p{grid-row:span 2}
+  .tstop .tm,.tstop .lc{grid-column:2}
+  .leg{flex:0 0 auto;padding:10px 0 10px 28px;justify-items:start;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+  .leg::before{left:24px;right:auto;top:0;bottom:0;border-top:0;border-left:2px dashed var(--road)}
+  .leg.stay::before{border-top:0;border-left:2px dotted var(--sign)}
+  .leg span{background:transparent;padding:0}
+}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;padding:0;list-style:none}
+.facts li{border-radius:8px;padding:7px 11px;font-size:14px;background:var(--soft);border:1px solid var(--line)}
+.facts li.alert{background:var(--warnbg);color:var(--warn);font-weight:600;border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+/* Tabela */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;max-height:560px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font:600 13px/1.2 var(--f-disp);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);background:var(--soft);position:sticky;top:0;z-index:1}
+tr:last-child td{border-bottom:0}
+td.t{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td.miss{color:var(--mut);opacity:.5}
+.hits{display:inline-flex;gap:3px;vertical-align:middle}
+.hits i{width:10px;height:10px;border-radius:3px;background:var(--line)}
+.hits i.on{background:var(--ok)}
 tr.pick{cursor:pointer}
 tr.pick:hover td{background:color-mix(in srgb,var(--road) 6%,transparent)}
-tr.sel td{background:color-mix(in srgb,var(--sign) 14%,transparent)}
-@media (max-width:560px){.frow{grid-template-columns:1fr 60px}.frow .bar{grid-column:1/-1;grid-row:2}}
-@media (max-width:560px){.stop{grid-template-columns:44px 1fr}.acts{grid-column:2}.ctl .btn.go{margin-left:0;width:100%}}
+tr.sel td{background:color-mix(in srgb,var(--sign) 16%,transparent)}
+tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--sign)}
+/* Placa Mercosul */
+.plate{display:inline-grid;grid-template-rows:9px auto;width:104px;border:2px solid #222;border-radius:5px;background:var(--plate);overflow:hidden;vertical-align:middle}
+.plate .band{background:var(--plateband);color:#fff;font:600 7px/9px var(--f-body);letter-spacing:.2em;text-align:center}
+.plate .num{color:var(--plateink);font:700 22px/1.15 var(--f-disp);letter-spacing:.06em;text-align:center}
+.foot{margin-top:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;color:var(--mut);font-size:13px}
+/* Caso de exemplo */
+.story{margin-top:16px;border:1px solid color-mix(in srgb,var(--sign) 35%,transparent);background:color-mix(in srgb,var(--sign) 9%,var(--panel));border-radius:12px;padding:14px 16px}
+.story h3{margin:0 0 4px;font:700 20px/1.1 var(--f-disp);text-transform:uppercase;letter-spacing:.02em}
+.story p{margin:4px 0 0;max-width:70ch}
+.story .tagf{display:inline-block;font:600 12px/1 var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--signink);background:var(--sign);border-radius:99px;padding:4px 8px;margin-left:8px;vertical-align:middle}
+@media (max-width:640px){
+  .stop{grid-template-columns:44px 1fr}
+  .acts{grid-column:2}
+  .acts .btn{padding:6px 8px;border-color:var(--line)}
+  .ctl{grid-template-columns:1fr}
+  .ctl .btn.go{width:100%}
+  .frow{grid-template-columns:1fr 50px}.frow .bar{grid-column:1/-1;grid-row:2}
+  .panel{padding:18px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header>
+<header class="hero"><div class="in">
   <div>
     <div class="brand"><span class="signbox">OCR</span><h1>Cruzador de Placas</h1></div>
-    <p class="lede">Junte os CSVs da Consulta Radares, um por ponto da rota, e veja quais placas passaram em todos eles.</p>
+    <p class="lede">Junte os CSVs da Consulta Radares, um por ponto da rota, e veja quais placas passaram em todos eles, na ordem certa.</p>
   </div>
   <div class="private">Os arquivos não saem deste computador</div>
-</header>
+</div></header>
+<div class="wrap">
 
 <section class="panel" aria-labelledby="s1">
-  <p class="eyebrow" id="s1">1 · Pontos da rota</p>
+  <p class="eyebrow" id="s1"><span class="no">1</span>Pontos da rota<span class="ct" id="ptct"></span></p>
   <div id="drop" tabindex="0" role="button" aria-label="Escolher arquivos CSV">
-    <div><strong>Escolha os CSVs</strong><span>Clique ou arraste os arquivos para cá. De 2 a 10 pontos. Duas consultas da mesma câmera com horários emendados viram um ponto só.</span></div>
+    <div class="upi" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/></svg></div>
+    <div class="dtx"><strong>Escolha os CSVs</strong><span>Clique ou arraste os arquivos para cá. De 2 a 10 pontos. Duas consultas da mesma câmera com horários emendados viram um ponto só.</span></div>
     <div class="btns">
       <button class="btn ghost" id="demo" type="button">Usar exemplo (Caso 1)</button>
       <button class="btn ghost" id="clear" type="button" hidden>Limpar tudo</button>
@@ -170,21 +219,23 @@ tr.sel td{background:color-mix(in srgb,var(--sign) 14%,transparent)}
 </section>
 
 <section class="panel" aria-labelledby="s2">
-  <p class="eyebrow" id="s2">2 · Comparar</p>
+  <p class="eyebrow" id="s2"><span class="no">2</span>Comparar</p>
   <div class="ctl">
+    <div class="opts">
     <label for="min">A placa precisa aparecer em <select id="min"></select></label>
-    <label class="sw" for="seq"><input type="checkbox" id="seq" checked> Exigir a ordem dos pontos (P1 antes de P2…)</label>
-    <label class="sw" for="mask"><input type="checkbox" id="mask"> Esconder parte da placa ao projetar</label>
+    <label class="sw" for="seq"><input type="checkbox" id="seq" role="switch" checked> Exigir a ordem dos pontos (P1 antes de P2…)</label>
+    <label class="sw" for="mask"><input type="checkbox" id="mask" role="switch"> Esconder parte da placa ao projetar</label>
+    </div>
     <button class="btn go" id="go" type="button" disabled>Cruzar placas</button>
   </div>
 </section>
 
 <section class="panel" id="res" aria-labelledby="s3" hidden>
-  <p class="eyebrow" id="s3">3 · Resultado</p>
+  <p class="eyebrow" id="s3"><span class="no">3</span>Resultado</p>
   <div class="verdict" id="verdict"><div class="big" id="big"></div><div class="hint" id="hint"></div></div>
-  <div id="funnelbox"><p class="sub">Como a lista encolheu</p><p class="subhint">Cada ponto a mais tira da lista quem não passou por ele, ou passou fora da ordem.</p><div class="funnel" id="funnel"></div></div>
-  <div id="tripbox" hidden><p class="sub" id="triptitle">Trajeto da placa</p><p class="subhint" id="triphint">Clique em outra placa da tabela para ver o trajeto dela.</p><div class="tripwrap"><div class="trip" id="trip"></div></div><ul class="facts" id="facts"></ul></div>
-  <p class="sub" id="tbltitle">Placas encontradas</p>
+  <div id="funnelbox" class="block"><p class="sub">Como a lista encolheu</p><p class="subhint">Cada ponto a mais tira da lista quem não passou por ele, ou passou fora da ordem.</p><div class="funnel" id="funnel"></div></div>
+  <div id="tripbox" class="block" hidden><p class="sub" id="triptitle">Trajeto da placa</p><p class="subhint" id="triphint">Clique em outra placa da tabela para ver o trajeto dela.</p><div class="tripwrap"><div class="trip" id="trip"></div></div><ul class="facts" id="facts"></ul></div>
+  <p class="sub block" id="tbltitle">Placas encontradas</p>
   <div class="tbl"><table id="tbl"></table></div>
   <div class="foot"><span id="note"></span><button class="btn" id="exp" type="button">Baixar resultado (CSV)</button></div>
 </section>
@@ -274,8 +325,8 @@ function note(t){$('note').textContent=t;}
 function draw(){
   $('pts').innerHTML=pts.map((p,i)=>`<li class="stop ${p.on?'':'off'}">
     <span class="km">P${i+1}</span>
-    <div class="info"><div class="loc">${p.label?`<span style="color:var(--road)">${esc(p.label)}</span> · `:""}${esc(p.loc)}</div>
-    <div class="meta"><b>${fmt(p.from)}</b> até <b>${fmt(p.to)}</b> · ${p.rows.length.toLocaleString('pt-BR')} passagens · ${Object.keys(p.idx).length.toLocaleString('pt-BR')} placas${p.files.length>1?` · <b>${p.files.length} consultas emendadas</b>`:''}</div></div>
+    <div class="info"><div class="loc">${p.label?`<span class="lab">${esc(p.label)}</span>`:""}<span class="${p.label?'cam':'lab'}">${esc(p.loc)}</span></div>
+    <div class="meta"><b>${fmt(p.from)}</b> até <b>${fmt(p.to)}</b> · ${p.rows.length.toLocaleString('pt-BR')} passagens · ${Object.keys(p.idx).length.toLocaleString('pt-BR')} placas${p.files.length>1?`<span class="chip">${p.files.length} consultas emendadas</span>`:''}</div></div>
     <div class="acts"><button class="btn" type="button" onclick="tog(${i})">${p.on?'Não usar':'Usar'}</button><button class="btn" type="button" onclick="del(${i})" aria-label="Remover P${i+1}">Remover</button></div></li>`).join('');
   const n=pts.filter(p=>p.on).length, sel=$('min'), prev=sel.value;
   sel.innerHTML='';
@@ -284,6 +335,7 @@ function draw(){
   if(userMin&&prev&&+prev<=n) sel.value=prev;
   $('go').disabled=n<2;
   $('clear').hidden=!pts.length;
+  $('ptct').textContent=pts.length?`${n} de ${pts.length} em uso`:'';
 }
 function tog(i){pts[i].on=!pts[i].on;draw()}
 function del(i){pts.splice(i,1);draw()}
