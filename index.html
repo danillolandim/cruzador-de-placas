@@ -187,6 +187,51 @@ tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--sign)}
   .frow{grid-template-columns:1fr 50px}.frow .bar{grid-column:1/-1;grid-row:2}
   .panel{padding:18px}
 }
+/* Abas */
+.tabs{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:5px;box-shadow:var(--shadow);width:max-content;max-width:100%}
+.tab{font:700 17px/1 var(--f-disp);letter-spacing:.05em;text-transform:uppercase;border:0;background:transparent;color:var(--mut);padding:11px 16px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:8px}
+.tab .no{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--ink);font-size:13px}
+.tab[aria-selected="true"]{background:var(--road);color:var(--panel)}
+.tab[aria-selected="true"] .no{background:var(--sign);color:var(--signink)}
+.tab:focus-visible{outline:3px solid var(--sign);outline-offset:2px}
+.view{display:grid;gap:18px}
+.view[hidden]{display:none}
+.view>*{min-width:0}
+/* Calculadora */
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.fld{display:grid;gap:5px;font-size:14px;color:var(--mut);font-weight:500}
+.fld input{font:500 16px var(--f-mono);padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);width:100%;min-width:0}
+.fld input:focus-visible{outline:3px solid var(--sign);outline-offset:1px}
+.rule{margin:14px 0 0;padding:12px 14px;border-radius:10px;background:var(--soft);border:1px solid var(--line);font-size:14px;color:var(--mut)}
+.rule b{color:var(--ink)}
+.cpts{display:grid;gap:10px;margin-top:6px}
+.cpt{display:grid;grid-template-columns:44px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr) auto;gap:10px;align-items:end;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}
+.cpt .km{align-self:center}
+.cpt .rm{padding:9px 10px;font-size:13px;background:transparent;color:var(--mut)}
+.addpt{margin-top:10px}
+.wins{display:grid;gap:12px}
+.win{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.win .wh{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:12px 14px;background:var(--soft);border-bottom:1px solid var(--line)}
+.win .wh .km{width:36px;height:36px;font-size:17px}
+.win .wh .nm{font-weight:600;font-size:16px}
+.win .wh .tt{color:var(--mut);font-size:13.5px}
+.win .wb{padding:12px 14px;display:grid;gap:10px}
+.span{font:600 clamp(18px,3vw,24px)/1.2 var(--f-mono);font-variant-numeric:tabular-nums}
+.span small{font:500 13px var(--f-body);color:var(--mut);display:block;margin-bottom:2px}
+.qs{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.q{border:1px dashed var(--road);border-radius:8px;padding:8px 12px;display:grid;gap:2px;font-variant-numeric:tabular-nums}
+.q .ql{font:600 12px/1 var(--f-disp);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.q .qv{font:500 15px var(--f-mono)}
+.when{font-size:13.5px;color:var(--mut)}
+.when b{color:var(--ink)}
+.split{display:inline-block;font-size:12px;font-weight:600;color:var(--warn);background:var(--warnbg);border-radius:99px;padding:2px 9px}
+.cnote{font-size:13.5px;color:var(--mut);margin:12px 0 0}
+@media (max-width:640px){
+  .tabs{width:100%}.tab{flex:1;justify-content:center;padding:11px 8px;font-size:15px}
+  .cpt{grid-template-columns:44px 1fr 1fr;grid-template-areas:"k n n" "m m f" "r r r"}
+  .cpt .km{grid-area:k}.cpt .fn{grid-area:n}.cpt .fm{grid-area:m}.cpt .ff{grid-area:f}
+  .cpt .rm{grid-area:r;justify-self:start}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -194,11 +239,39 @@ tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--sign)}
 <header class="hero"><div class="in">
   <div>
     <div class="brand"><span class="signbox">OCR</span><h1>Cruzador de Placas</h1></div>
-    <p class="lede">Junte os CSVs da Consulta Radares, um por ponto da rota, e veja quais placas passaram em todos eles, na ordem certa.</p>
+    <p class="lede">Calcule a janela de cada ponto para consultar no Córtex e depois cruze os CSVs para ver quais placas passaram em todos os pontos, na ordem certa.</p>
   </div>
   <div class="private">Os arquivos não saem deste computador</div>
 </div></header>
 <div class="wrap">
+<div class="tabs" role="tablist" aria-label="Ferramentas">
+  <button class="tab" role="tab" id="t-jan" aria-controls="v-jan" aria-selected="true" type="button"><span class="no">1</span>Calcular janelas</button>
+  <button class="tab" role="tab" id="t-cru" aria-controls="v-cru" aria-selected="false" type="button"><span class="no">2</span>Cruzar placas</button>
+</div>
+
+<div class="view" id="v-jan" role="tabpanel" aria-labelledby="t-jan">
+<section class="panel" aria-labelledby="c1">
+  <p class="eyebrow" id="c1"><span class="no">1</span>Saída<span class="ct">hora de Brasília</span></p>
+  <div class="calc-grid">
+    <label class="fld">Primeira saída possível<input type="datetime-local" id="dep0"></label>
+    <label class="fld">Última saída possível<input type="datetime-local" id="dep1"></label>
+  </div>
+  <p class="rule">Use a hora de Brasília, que é a do Córtex em todos os pontos, inclusive em MS. Se o Maps mostrar a chegada na hora de MS, some 1 hora.</p>
+</section>
+<section class="panel" aria-labelledby="c2">
+  <p class="eyebrow" id="c2"><span class="no">2</span>Pontos da rota<span class="ct">tempo do Maps a partir da saída</span></p>
+  <div class="cpts" id="cpts"></div>
+  <div class="btns addpt"><button class="btn" id="addpt" type="button">+ Ponto</button><button class="btn ghost" id="c-demo" type="button">Usar exemplo (Caso 1)</button></div>
+  <p class="rule"><b>Regra:</b> a cada 3 horas de estrada, some 1 hora de parada. A janela começa na primeira saída + tempo com paradas e termina na última saída + tempo com paradas + folga. A folga sugerida é 1/3 do tempo, e você pode mudar.</p>
+</section>
+<section class="panel" aria-labelledby="c3">
+  <p class="eyebrow" id="c3"><span class="no">3</span>Janelas para o Córtex</p>
+  <div class="wins" id="wins"></div>
+  <p class="cnote">O Córtex 1.0 aceita uma data por consulta: janela que passa da meia-noite vira duas consultas na mesma câmera. Carregue as duas no Cruzador, que junta as duas num ponto só. As passagens chegam em lotes, com 1 a 2 horas de atraso: consulte depois do horário indicado.</p>
+</section>
+</div>
+
+<div class="view" id="v-cru" role="tabpanel" aria-labelledby="t-cru" hidden>
 
 <section class="panel" aria-labelledby="s1">
   <p class="eyebrow" id="s1"><span class="no">1</span>Pontos da rota<span class="ct" id="ptct"></span></p>
@@ -239,6 +312,7 @@ tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--sign)}
   <div class="tbl"><table id="tbl"></table></div>
   <div class="foot"><span id="note"></span><button class="btn" id="exp" type="button">Baixar resultado (CSV)</button></div>
 </section>
+</div>
 </div>
 
 <script>
@@ -439,6 +513,70 @@ $('exp').onclick=()=>{
   a.download='resultado_cruzamento.csv'; a.click();
 };
 draw();
+
+/* ---------- Abas ---------- */
+const TABS=[['t-jan','v-jan'],['t-cru','v-cru']];
+function tab(id){TABS.forEach(([t,v])=>{const on=t===id;$(t).setAttribute('aria-selected',on);$(t).tabIndex=on?0:-1;$(v).hidden=!on})}
+TABS.forEach(([t])=>$(t).onclick=()=>tab(t));
+$('t-jan').parentElement.onkeydown=e=>{if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;const i=TABS.findIndex(([t])=>$(t).getAttribute('aria-selected')==='true');const n=TABS[(i+(e.key==='ArrowRight'?1:TABS.length-1))%TABS.length][0];tab(n);$(n).focus()};
+$('demo').addEventListener('click',()=>tab('t-cru'));
+if(location.hash==='#cruzar')tab('t-cru');
+
+/* ---------- Calculadora de janelas ---------- */
+// Horários tratados como "hora de Brasília" sem fuso: tudo em minutos desde 1970, via Date.UTC.
+const MIN=60000;
+function pdt(v){const m=(v||'').match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);return m?Date.UTC(+m[1],m[2]-1,+m[3],+m[4],+m[5])/MIN:NaN}
+function p2(n){return String(n).padStart(2,'0')}
+function dd(t){const d=new Date(t*MIN);return `${p2(d.getUTCDate())}/${p2(d.getUTCMonth()+1)}`}
+function hh(t){const d=new Date(t*MIN);return `${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}`}
+function hm(m){m=Math.round(m);return `${Math.floor(m/60)}h${p2(m%60)}`}
+function local(t){const d=new Date(t*MIN);return `${d.getUTCFullYear()}-${p2(d.getUTCMonth()+1)}-${p2(d.getUTCDate())}T${hh(t)}`}
+// Paradas: 1 hora a cada 3 horas completas de estrada
+const stops=m=>Math.floor(m/180)*60;
+const cpts=[];
+function addC(name,h,m,folga){cpts.push({name:name||'',h:h??'',m:m??'',folga:folga??''});drawC()}
+function drawC(){
+  $('cpts').innerHTML=cpts.map((p,i)=>{
+    const road=(+p.h||0)*60+(+p.m||0), tot=road+stops(road), sug=road?Math.round(tot/3/60):'';
+    return `<div class="cpt"><span class="km">P${i+2}</span>
+    <label class="fld fn">Ponto<input value="${esc(p.name)}" data-i="${i}" data-k="name" placeholder="Ex.: Rio Verde"></label>
+    <label class="fld fm">Maps (h:min)<span style="display:flex;gap:6px"><input inputmode="numeric" value="${esc(p.h)}" data-i="${i}" data-k="h" placeholder="h" aria-label="Horas"><input inputmode="numeric" value="${esc(p.m)}" data-i="${i}" data-k="m" placeholder="min" aria-label="Minutos"></span></label>
+    <label class="fld ff">Folga (h)<input inputmode="numeric" value="${esc(p.folga)}" data-i="${i}" data-k="folga" placeholder="${sug!==''?'sugerida '+sug:'h'}"></label>
+    <button class="btn rm" type="button" data-rm="${i}" aria-label="Remover P${i+2}">Remover</button></div>`}).join('');
+  $('cpts').querySelectorAll('input').forEach(inp=>inp.oninput=()=>{cpts[inp.dataset.i][inp.dataset.k]=inp.value;calc()});
+  $('cpts').querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{cpts.splice(+b.dataset.rm,1);drawC()});
+  calc();
+}
+function calc(){
+  const a=pdt($('dep0').value), b=pdt($('dep1').value);
+  if(isNaN(a)||isNaN(b)){$('wins').innerHTML='<p class="when">Preencha a primeira e a última saída.</p>';return}
+  if(b<a){$('wins').innerHTML='<p class="when">A última saída precisa ser depois da primeira.</p>';return}
+  let html=`<div class="win"><div class="wh"><span class="km">P1</span><span class="nm">Saída</span><span class="tt">ponto de origem</span></div><div class="wb">${spanHtml(a,b)}${queries(a,b)}</div></div>`;
+  cpts.forEach((p,i)=>{
+    const road=(+p.h||0)*60+(+p.m||0); if(!road)return;
+    const st=stops(road), tot=road+st, fol=(p.folga!==''&&!isNaN(+p.folga)?+p.folga:Math.round(tot/3/60))*60;
+    const s=a+tot, e=b+tot+fol;
+    html+=`<div class="win"><div class="wh"><span class="km">P${i+2}</span><span class="nm">${esc(p.name||'Ponto '+(i+2))}</span>
+      <span class="tt">Maps ${hm(road)} + ${hm(st)} de parada = ${hm(tot)} · folga ${hm(fol)}</span></div>
+      <div class="wb">${spanHtml(s,e)}${queries(s,e)}<p class="when">Janela fecha às <b>${dd(e)} ${hh(e)}</b>: consulte depois de <b>${dd(e+120)} ${hh(e+120)}</b>, por causa do atraso do Córtex.</p></div></div>`;
+  });
+  $('wins').innerHTML=html;
+}
+function spanHtml(s,e){return `<div class="span"><small>Janela</small>${dd(s)} ${hh(s)} até ${dd(e)} ${hh(e)}</div>`}
+// Uma consulta por data: corta a janela na meia-noite
+function queries(s,e){
+  const out=[]; let t=s;
+  while(t<=e){const d0=Math.floor(t/1440)*1440, last=Math.min(e,d0+1439);out.push([t,last]);t=d0+1440}
+  // Terminar exatamente à meia-noite não pede uma consulta de 00:00 às 00:00
+  if(out.length>1&&out[out.length-1][0]===out[out.length-1][1])out.pop();
+  return `<div class="qs">${out.length>1?'<span class="split">Passa da meia-noite: '+out.length+' consultas</span>':''}${out.map(([x,y],k)=>`<div class="q"><span class="ql">Consulta ${out.length>1?k+1:''} · data ${dd(x)}</span><span class="qv">${hh(x)} às ${hh(y)}</span></div>`).join('')}</div>`;
+}
+['dep0','dep1'].forEach(id=>$(id).oninput=calc);
+$('addpt').onclick=()=>addC();
+function demoC(){$('dep0').value='2026-11-10T18:00';$('dep1').value='2026-11-11T00:00';cpts.length=0;
+  cpts.push({name:'Rio Verde',h:'4',m:'39',folga:''},{name:'Chegada à fronteira (Ponta Porã)',h:'14',m:'05',folga:''});drawC()}
+$('c-demo').onclick=demoC;
+demoC();
 </script>
 </body>
 </html>
