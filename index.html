@@ -13,7 +13,7 @@
 :root{
   --ground:#e6ecf2; --sheet:#ffffff; --ink:#162231; --mut:#55667a; --line:#d3dce5; --line-strong:#7d8b9a; --soft:#f2f5f8;
   --head:#1446a0; --head-ink:#ffffff; --head-mut:#d5e0f5; --head-line:rgba(255,255,255,.45);
-  --blue:#1446a0; --band:rgba(20,70,160,.15); --density:#7d8b9a; --gone:#b9c3cd;
+  --blue:#1446a0; --band:rgba(20,70,160,.15); --density:#8a97a5; --gone:#8795a3; --night:rgba(22,34,49,.055);
   --red:#c8102e; --amber:#9a5200; --amber-bg:#fff1dc; --ok:#1f6e43; --focus:#0a2a66;
   --plate:#ffffff; --plate-band:#123f8c; --plate-ink:#111a24; --plate-edge:#1b2430;
   --f:"Atkinson Hyperlegible Next",system-ui,"Segoe UI",Arial,sans-serif;
@@ -24,13 +24,13 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --ground:#0d141c; --sheet:#151f2a; --ink:#e7edf4; --mut:#9fb0c2; --line:#2a3949; --line-strong:#62788e; --soft:#1b2734;
   --head:#123170; --head-ink:#ffffff; --head-mut:#c3d2ee;
-  --blue:#7ea6f2; --band:rgba(126,166,242,.2); --density:#7f93a8; --gone:#3f4e5e;
+  --blue:#7ea6f2; --band:rgba(126,166,242,.2); --density:#6c8096; --gone:#6f8296; --night:rgba(0,0,0,.28);
   --red:#ff6378; --amber:#f2ac55; --amber-bg:#3a2a14; --ok:#6fd49b; --focus:#ffd166;
   --plate:#f3f5f8; --plate-band:#1d4fa8; --plate-ink:#111a24; --plate-edge:#0b0f14; color-scheme:dark}}
 :root[data-theme="dark"]{
   --ground:#0d141c; --sheet:#151f2a; --ink:#e7edf4; --mut:#9fb0c2; --line:#2a3949; --line-strong:#62788e; --soft:#1b2734;
   --head:#123170; --head-ink:#ffffff; --head-mut:#c3d2ee;
-  --blue:#7ea6f2; --band:rgba(126,166,242,.2); --density:#7f93a8; --gone:#3f4e5e;
+  --blue:#7ea6f2; --band:rgba(126,166,242,.2); --density:#6c8096; --gone:#6f8296; --night:rgba(0,0,0,.28);
   --red:#ff6378; --amber:#f2ac55; --amber-bg:#3a2a14; --ok:#6fd49b; --focus:#ffd166;
   --plate:#f3f5f8; --plate-band:#1d4fa8; --plate-ink:#111a24; --plate-edge:#0b0f14; color-scheme:dark}
 *{box-sizing:border-box}
@@ -44,16 +44,15 @@ body{background:var(--ground);color:var(--ink);font:1.0625rem/1.55 var(--f);-web
 .skip:focus{top:12px}
 h1,h2,h3{margin:0;font-weight:750;letter-spacing:-.01em;text-wrap:balance}
 p{margin:0}
-/* Cabeçalho: faixa azul de despacho */
+/* Cabeçalho: faixa azul de despacho, compacta para sobrar tela ao gráfico */
 .top{--focus:#ffd166;background:var(--head);color:var(--head-ink)}
-.top .in{max-width:1240px;margin:0 auto;padding:28px 24px 26px;display:flex;flex-wrap:wrap;gap:18px 40px;align-items:flex-end;justify-content:space-between}
-h1{font-size:clamp(2rem,4vw,2.75rem);line-height:1.02;font-weight:800}
-.lede{margin-top:8px;color:var(--head-mut);max-width:56ch}
-.hside{display:grid;gap:10px;justify-items:end;text-align:right}
-.status{font-weight:700}
-.status small{display:block;font-weight:400;color:var(--head-mut);font-size:.9375rem}
-.priv{font-size:.9375rem;color:var(--head-mut);display:flex;align-items:center;gap:8px}
-.priv svg{flex:0 0 auto}
+.top .in{max-width:1240px;margin:0 auto;padding:12px 24px;display:flex;flex-wrap:wrap;gap:10px 28px;align-items:center;justify-content:space-between}
+.id{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.h1{font-size:1.625rem;line-height:1.1;font-weight:800;letter-spacing:-.01em}
+.lede{color:var(--head-mut)}
+.hside{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;justify-content:flex-end}
+.status{font-size:.9375rem;color:var(--head-mut);margin-right:6px}
+.status b{color:var(--head-ink)}
 /* Botões */
 .btn{font:700 1rem/1.1 var(--f);border-radius:6px;padding:10px 16px;min-height:42px;cursor:pointer;border:1.5px solid var(--line-strong);background:var(--sheet);color:var(--ink);display:inline-flex;align-items:center;gap:8px;transition:background .15s,border-color .15s}
 .btn:hover{border-color:var(--blue)}
@@ -79,57 +78,63 @@ main:focus{outline:none}
 .sec .intro{color:var(--mut);margin:6px 0 20px;max-width:70ch}
 .sec h3{font-size:1.1875rem;margin:30px 0 10px}
 /* Palco: a rota no tempo */
-.stage{padding-top:26px}
-.stage-h{display:flex;flex-wrap:wrap;gap:16px 30px;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
-.stage h2{font-size:1.125rem;color:var(--mut);font-weight:700}
-.verdict{font-size:clamp(1.5rem,2.6vw,2.125rem);line-height:1.15;font-weight:800;margin-top:4px;max-width:34ch}
+.stage{padding-top:18px;padding-bottom:22px}
+.stage-h{display:flex;gap:12px 24px;align-items:center;justify-content:space-between;margin-bottom:6px}
+.verdict{font-size:clamp(1.375rem,2.3vw,1.875rem);line-height:1.2;font-weight:800;flex:1 1 auto;min-width:0}
 .verdict.zero{color:var(--amber)}
-.case{color:var(--mut);margin-top:8px;max-width:72ch}
+.case{color:var(--mut);margin-top:12px;max-width:80ch}
 .case b{color:var(--ink)}
-.stepper{display:grid;gap:6px;justify-items:end}
+.stepper{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;flex:0 0 auto}
 .stepper .lbl{font-size:.9375rem;color:var(--mut)}
-.seg{display:flex;flex-wrap:wrap;gap:0;border:1.5px solid var(--line-strong);border-radius:6px;overflow:hidden}
-.seg button{font:700 1rem/1 var(--f);min-width:52px;min-height:42px;padding:8px 12px;border:0;border-left:1.5px solid var(--line-strong);background:var(--sheet);color:var(--ink);cursor:pointer}
+.seg{display:flex;border:1.5px solid var(--line-strong);border-radius:6px;overflow:hidden}
+.seg button{font:700 1rem/1 var(--f);min-width:48px;min-height:40px;padding:8px 10px;border:0;border-left:1.5px solid var(--line-strong);background:var(--sheet);color:var(--ink);cursor:pointer}
 .seg button:first-child{border-left:0}
 .seg button[aria-pressed="true"]{background:var(--blue);color:var(--sheet)}
 .seg button:focus-visible{outline-offset:-4px}
-.stepnav{display:flex;gap:8px}
+#prev{min-width:40px;justify-content:center;padding:7px 10px}
 .chartwrap{overflow-x:auto;scrollbar-color:var(--line-strong) transparent;margin:0 -8px;padding:0 8px}
 #chart{display:block;width:100%;font-family:var(--f)}
+.strip{position:relative;display:block;flex:1 1 100%;height:12px;background:var(--soft);border:1px solid var(--line);border-radius:2px;max-width:34rem;margin:2px 0}
+.strip i{position:absolute;top:-1px;bottom:-1px;background:var(--band);border:1.5px solid var(--blue);border-radius:2px}
+.strip i.f{background:var(--density);border:0;top:3px;bottom:3px}
 #chart text{fill:var(--ink)}
-#chart .tick text{fill:var(--mut);font-size:13px}
+#chart .tick text{fill:var(--mut);font-size:16px}
 #chart .tick text.day{fill:var(--ink);font-weight:700}
 #chart .tick line{stroke:var(--line)}
 #chart .tick.mid line{stroke:var(--line-strong);stroke-dasharray:3 4}
+#chart .night{fill:var(--night)}
 #chart .st line{stroke:var(--line-strong)}
-#chart .st .nm{font-weight:700;font-size:15px}
-@media (max-width:640px){#chart .st .nm{font-size:12.5px}#chart .tick text,#chart .st .km{font-size:11px}#chart .ft{font-size:11px}}
-#chart .st .km{fill:var(--mut);font-size:13px}
+#chart .st .nm{font-weight:700;font-size:20px}
+#chart .st .km{fill:var(--mut);font-size:16px}
 #chart .st.off .nm,#chart .st.off .km{fill:var(--mut)}
 #chart .band{fill:var(--band);stroke:var(--blue);stroke-width:1.5}
 #chart .dens{fill:var(--density)}
-#chart .gone{stroke:var(--gone);fill:none;stroke-width:1.5}
-#chart .gone-d{fill:var(--gone)}
-#chart .live{stroke:var(--blue);fill:none;stroke-width:2;opacity:.9}
+#chart .gone{stroke:var(--gone);fill:none;stroke-width:1.6}
+#chart .gone-x{stroke:var(--gone);stroke-width:2;stroke-linecap:round}
+#chart .live{stroke:var(--blue);fill:none;stroke-width:2.2}
 #chart .live-d{fill:var(--blue)}
-#chart .focus{stroke:var(--red);fill:none;stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+#chart .focus{stroke:var(--red);fill:none;stroke-width:4.5;stroke-linejoin:round;stroke-linecap:round}
 #chart .focus-d{fill:var(--sheet);stroke:var(--red);stroke-width:3}
-#chart .ft{fill:var(--red);font:700 14px var(--f-mono)}
+#chart .ft{fill:var(--red);font:700 18px var(--f-mono)}
+#chart .spd{fill:var(--red);font:700 15px var(--f)}
 #chart .ftag rect{fill:var(--red)}
-#chart .ftag text{fill:#fff;font:700 13px var(--f-mono)}
-#chart .cnt{font-size:14px;fill:var(--mut)}
-#chart .cnt b,#chart .cnt .v{font-weight:800;fill:var(--ink);font-size:17px}
-#chart .cnt.last .v{fill:var(--red)}
-#chart .empty{fill:var(--mut);font-size:16px}
+#chart .ftag text{fill:#fff;font:700 18px var(--f-mono)}
+#chart .cnt{font-size:16px;fill:var(--mut)}
+#chart .cnt .v{font-weight:800;fill:var(--ink);font-size:24px}
+#chart .cnt.cur .v{fill:var(--blue)}
+#chart .empty{fill:var(--mut);font-size:18px}
 #chart [data-pl]{cursor:pointer}
 #chart .grow{stroke-dasharray:1;stroke-dashoffset:1;animation:grow .7s cubic-bezier(.2,.7,.2,1) forwards}
+#chart .dying{animation:die .9s ease-out .15s both}
 @keyframes grow{to{stroke-dashoffset:0}}
-.legend{display:flex;flex-wrap:wrap;gap:8px 22px;list-style:none;margin:12px 0 0;padding:0;font-size:.9375rem;color:var(--mut)}
+@keyframes die{from{stroke:var(--blue)}to{stroke:var(--gone)}}
+@media (max-width:640px){#chart .st .nm{font-size:13px}#chart .tick text,#chart .st .km{font-size:12px}#chart .ft,#chart .ftag text{font-size:12px}#chart .spd{font-size:11px}#chart .cnt .v{font-size:16px}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 22px;list-style:none;margin:6px 0 0;padding:0;font-size:1.0625rem;color:var(--mut)}
 .legend li{display:flex;align-items:center;gap:8px}
 .chartnote{font-size:.9375rem;color:var(--mut);margin-top:8px}
 /* Passo 1: rota */
 .route{list-style:none;margin:0;padding:0}
-.rhead,.rrow{display:grid;grid-template-columns:3rem minmax(8rem,1.2fr) 5rem 10.5rem minmax(21rem,2.3fr) 6rem;gap:10px 14px;align-items:center}
+.rhead,.rrow{display:grid;grid-template-columns:3rem minmax(8rem,1fr) 5rem 10.5rem minmax(30rem,2.6fr) 6rem;gap:10px 14px;align-items:center}
 .rhead{font-size:.9375rem;color:var(--mut);padding:0 0 8px;border-bottom:1px solid var(--line)}
 .rrow{padding:14px 0}
 .route>li{border-bottom:1px solid var(--line)}
@@ -139,10 +144,11 @@ main:focus{outline:none}
 .fld .lb{font-size:.875rem;color:var(--mut)}
 .rrow .fld .lb{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 input,select{font:500 1rem var(--f);padding:9px 11px;border-radius:6px;border:1.5px solid var(--line-strong);background:var(--sheet);color:var(--ink);min-height:42px;width:100%;min-width:0}
-input.num,input[type="datetime-local"]{font-family:var(--f-mono)}
+input.num{font-family:var(--f-mono)}
+input[type="datetime-local"]{min-width:14.5rem}
 input[aria-invalid="true"]{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}
 .pair{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0}
-.pair>.fld{flex:1 1 10rem}
+.pair>.fld{flex:1 1 14.5rem}
 .pair>input.num{flex:1 1 3.25rem;min-width:3.25rem}
 .pair .u{flex:0 0 auto;color:var(--mut);font-size:.9375rem}
 .fixed{color:var(--mut);font-size:.9375rem}
@@ -150,7 +156,7 @@ input[aria-invalid="true"]{border-color:var(--amber);box-shadow:inset 0 0 0 1px 
 .rres .w{font-size:.9375rem;color:var(--mut)}
 .rres .w b{color:var(--ink);font-family:var(--f-mono);font-weight:500}
 .qs{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
-.q{border:1.5px solid var(--blue);border-radius:6px;padding:5px 10px;font-family:var(--f-mono);font-size:.9375rem;color:var(--ink);background:color-mix(in srgb,var(--blue) 6%,var(--sheet))}
+.q{border:1.5px solid var(--blue);border-radius:6px;padding:5px 10px;font-variant-numeric:tabular-nums;font-size:.9375rem;color:var(--ink);background:color-mix(in srgb,var(--blue) 6%,var(--sheet))}
 .q b{font-weight:600;margin-right:6px}
 .ferr{margin:0 0 14px calc(3rem + 14px);color:var(--amber);font-weight:700;font-size:.9375rem}
 .ferr[hidden]{display:none}
@@ -201,8 +207,8 @@ input[aria-invalid="true"]{border-color:var(--amber);box-shadow:inset 0 0 0 1px 
 .rsum.zero{color:var(--amber)}
 .rnext{margin-top:6px;color:var(--mut)}
 .checks{margin:0;padding:0;list-style:none;display:grid;gap:6px}
-.checks li{display:flex;gap:10px;align-items:flex-start}
-.checks li::before{content:"";flex:0 0 16px;height:16px;margin-top:4px;border:1.5px solid var(--line-strong);border-radius:3px}
+.checks label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.checks input{flex:0 0 20px;width:20px;height:20px;min-height:0;margin:3px 0 0;padding:0}
 .ct{font-weight:700;margin-bottom:8px}
 table{border-collapse:collapse;width:100%;font-size:1rem}
 th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:middle}
@@ -217,8 +223,8 @@ th{font-size:.9375rem;font-weight:700;color:var(--mut);background:var(--soft);ve
 .tbl td.miss{color:var(--mut)}
 .tbl tbody tr{cursor:pointer}
 .tbl tbody tr:hover td{background:color-mix(in srgb,var(--blue) 6%,transparent)}
-.tbl tr.sel td{background:color-mix(in srgb,var(--red) 9%,transparent)}
-.tbl tr.sel td:first-child{box-shadow:inset 4px 0 0 var(--red)}
+.tbl tr.sel td{background:color-mix(in srgb,var(--blue) 12%,transparent)}
+.tbl td.veh{white-space:normal;min-width:12ch;max-width:20ch}
 .sort{all:unset;cursor:pointer;display:inline-flex;align-items:flex-end;gap:4px;min-height:24px;border-radius:4px}
 .sort:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .sort .ar{width:12px;height:12px;display:inline-grid}
@@ -236,6 +242,7 @@ th[aria-sort="ascending"] .sort,th[aria-sort="descending"] .sort{color:var(--ink
 .foot span{max-width:70ch}
 .empty-msg{color:var(--mut);margin-top:10px}
 @media (max-width:900px){
+  .stage-h{flex-wrap:wrap}
   .result{grid-template-columns:1fr}
   .rhead{display:none}
   .rrow{grid-template-columns:3rem 1fr 1fr;grid-template-areas:"pm nm nm" ". km how" ". par par" ". rm rm"}
@@ -245,11 +252,11 @@ th[aria-sort="ascending"] .sort,th[aria-sort="descending"] .sort{color:var(--ink
   .frow>.pm{grid-area:pm}.frow>.finfo{grid-area:info}.frow>.c-slot{grid-area:slot}.frow>.fside{grid-area:side;justify-content:flex-start}
 }
 @media (max-width:640px){
-  .top .in{padding:22px 16px}
-  .hside{justify-items:start;text-align:left}
-  .top .btns{justify-content:flex-start}
+  .top .in{padding:14px 16px}
+  .hside{justify-content:flex-start}
+  .stage-h{flex-wrap:wrap}
   .sec{padding:24px 16px 28px}
-  .stepper{justify-items:start}
+  .stepper{justify-content:flex-start;flex:1 1 100%}
   .rtools .note{margin-left:0}
 }
 @media (pointer:coarse){.btn.sm,.sort{min-height:44px}.btn,.seg button,input,select,.sw{min-height:44px}}
@@ -259,48 +266,38 @@ th[aria-sort="ascending"] .sort,th[aria-sort="descending"] .sort{color:var(--ink
 <body>
 <a class="skip" href="#main">Pular para o conteúdo</a>
 <header class="top"><div class="in">
-  <div>
-    <h1>Cruzador de Placas</h1>
-    <p class="lede">Análise de rota com câmeras OCR: calcule a janela de cada ponto, carregue as passagens do Consulta Radares e veja quais placas fizeram o trajeto inteiro.</p>
-  </div>
+  <div class="id"><h1 class="h1">Cruzador de Placas</h1><p class="lede">análise de rota com câmeras OCR</p></div>
   <div class="hside">
     <p class="status" id="status"></p>
-    <div class="btns">
-      <button class="btn sm" id="ex-load" type="button">Carregar o Caso 1</button>
-      <button class="btn sm" id="reset" type="button">Começar do zero</button>
-      <button class="btn sm" id="theme" type="button">Tema: automático</button>
-    </div>
-    <p class="priv"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Os arquivos são lidos só neste computador. Nada é enviado.</p>
+    <button class="btn sm" id="ex-load" type="button">Carregar o Caso 1</button>
+    <button class="btn sm" id="reset" type="button">Começar do zero</button>
+    <button class="btn sm" id="theme" type="button">Tema: automático</button>
   </div>
 </div></header>
 
 <main id="main" tabindex="-1"><div class="sheet">
 
-<section class="sec stage" aria-labelledby="g-t">
+<section class="sec stage" aria-labelledby="verdict">
   <div class="stage-h">
-    <div>
-      <h2 id="g-t">A rota no tempo</h2>
-      <p class="verdict" id="verdict"></p>
-      <p class="case" id="case"></p>
-    </div>
-    <div class="stepper" id="stepper" hidden>
-      <span class="lbl" id="steplbl">Mostrar a eliminação até o ponto</span>
-      <div class="seg" id="steps" role="group" aria-labelledby="steplbl"></div>
-      <div class="stepnav">
-        <button class="btn sm" id="prev" type="button"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M9 2.5 4.5 7 9 11.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Ponto anterior</button>
-        <button class="btn sm pri" id="next" type="button">Próximo ponto<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 2.5 9.5 7 5 11.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      </div>
+    <h2 class="verdict" id="verdict"></h2>
+    <div class="stepper" id="stepper" role="group" aria-label="Mostrar a eliminação até o ponto" hidden>
+      <span class="lbl" aria-hidden="true">Mostrar até</span>
+      <div class="seg" id="steps"></div>
+      <button class="btn sm" id="prev" type="button" aria-label="Ponto anterior"><svg width="16" height="16" viewBox="0 0 14 14" aria-hidden="true"><path d="M9 2.5 4.5 7 9 11.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="btn sm pri" id="next" type="button">Próximo ponto<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 2.5 9.5 7 5 11.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
   </div>
-  <div class="chartwrap"><svg id="chart" role="img" aria-labelledby="g-t g-desc"></svg></div>
+  <div class="chartwrap"><svg id="chart" role="img" aria-label="A rota no tempo: km da rota por horário, com as janelas de consulta e as placas" aria-describedby="g-desc"></svg></div>
   <p class="sr" id="g-desc"></p>
   <ul class="legend" id="legend">
-    <li><svg width="30" height="14" aria-hidden="true"><rect x="1" y="2" width="28" height="10" rx="2" style="fill:var(--band);stroke:var(--blue);stroke-width:1.5"/></svg>janela de consulta do ponto</li>
-    <li><svg width="30" height="14" aria-hidden="true"><path d="M2 12V8M6 12V4M10 12V7M14 12V2M18 12V6M22 12V9M26 12V5" style="stroke:var(--density);stroke-width:2.5"/></svg>passagens registradas no CSV</li>
-    <li><svg width="30" height="14" aria-hidden="true"><path d="M2 12 28 2" style="stroke:var(--blue);stroke-width:2"/></svg>placa que segue na lista</li>
-    <li><svg width="30" height="14" aria-hidden="true"><path d="M2 12 16 6" style="stroke:var(--gone);stroke-width:2"/></svg>placa eliminada</li>
-    <li><svg width="30" height="14" aria-hidden="true"><path d="M2 12 28 2" style="stroke:var(--red);stroke-width:4;stroke-linecap:round"/></svg>placa em foco</li>
+    <li><svg width="30" height="16" aria-hidden="true"><rect x="1" y="3" width="28" height="10" rx="2" style="fill:var(--band);stroke:var(--blue);stroke-width:1.5"/></svg>janela de consulta</li>
+    <li><svg width="30" height="16" aria-hidden="true"><path d="M2 14V10M6 14V6M10 14V9M14 14V4M18 14V8M22 14V11M26 14V7" style="stroke:var(--density);stroke-width:2.5"/></svg>passagens no CSV</li>
+    <li><svg width="30" height="16" aria-hidden="true"><path d="M2 14 28 2" style="stroke:var(--blue);stroke-width:2"/></svg>placa que segue na lista</li>
+    <li><svg width="30" height="16" aria-hidden="true"><path d="M2 14 16 7" style="stroke:var(--gone);stroke-width:2"/><path d="M13 4l6 6M19 4l-6 6" style="stroke:var(--gone);stroke-width:2"/></svg>placa eliminada, onde parou</li>
+    <li><svg width="30" height="16" aria-hidden="true"><path d="M2 14 28 2" style="stroke:var(--red);stroke-width:4;stroke-linecap:round"/></svg>placa que sobrou ou escolhida na tabela</li>
+    <li><svg width="30" height="16" aria-hidden="true"><rect x="1" y="1" width="28" height="14" style="fill:var(--night)"/></svg>noite, das 18h às 6h</li>
   </ul>
+  <p class="case" id="case"></p>
   <p class="chartnote" id="chartnote" hidden></p>
 </section>
 
@@ -323,7 +320,7 @@ th[aria-sort="ascending"] .sort,th[aria-sort="descending"] .sort{color:var(--ink
 
 <section class="sec" id="st2" aria-labelledby="h2t">
   <h2 id="h2t"><span class="n">2.</span>Passagens</h2>
-  <p class="intro">Carregue um CSV do Consulta Radares por ponto. A página encaixa cada arquivo no ponto da rota pela janela e confere se a consulta cobriu a janela inteira.</p>
+  <p class="intro">Carregue um CSV do Consulta Radares por ponto. A página encaixa cada arquivo no ponto da rota pela janela e confere se a consulta cobriu a janela inteira. Os arquivos são lidos só neste computador: nada é enviado.</p>
   <div id="drop">
     <div class="dt"><b>Arraste os CSVs para cá</b><span>Precisam ter as colunas Placa e DataHoraPassagem. Duas consultas da mesma câmera com horários emendados viram um arquivo só.</span></div>
     <div class="btns"><button class="btn pri" id="pick" type="button">Escolher arquivos</button><button class="btn quiet" id="clear" type="button" hidden>Tirar todos os arquivos</button></div>
@@ -349,8 +346,8 @@ th[aria-sort="ascending"] .sort,th[aria-sort="descending"] .sort{color:var(--ink
         <p class="rnext" id="rnext"></p>
       </div>
       <div>
-        <p class="ct">Antes de concluir, confira:</p>
-        <ul class="checks" id="checks"></ul>
+        <p class="ct" id="checks-t">Antes de concluir, confira:</p>
+        <ul class="checks" id="checks" aria-labelledby="checks-t"></ul>
       </div>
     </div>
     <div id="legsbox" hidden>
@@ -422,7 +419,7 @@ setTheme(THEMES.includes(load('cruzador.tema'))?load('cruzador.tema'):'auto');
 /* ---------- Estado ---------- */
 const route=[];   // route[0] é a saída; os demais definem a janela pelo Maps ou por intervalo informado
 const pts=[];     // arquivos carregados; slot = índice do ponto da rota
-let example=false, selPl=null, R=null, upto=null, sortK='n', sortD=-1, busy=0, userMin=false, prevUpto=null;
+let example=false, selPl=null, picked=false, R=null, upto=null, sortK='n', sortD=-1, busy=0, userMin=false, prevUpto=null;
 
 /* ---------- Passo 1: rota e janelas ---------- */
 const stops=m=>Math.floor(m/180)*60; // 1 hora de parada a cada 3 horas completas de estrada
@@ -489,7 +486,7 @@ function updateRoute(){
     if(!w.ok){rr.innerHTML=`<span class="w">${w.bad?'':esc(w.msg)}</span>`;return}
     const qs=queries(w.s,w.e);
     copyLines.push(`P${i+1} ${rname(i)}: `+qs.map(([x,y])=>`${ddy(x)} ${hh(x)} às ${hh(y)}`).join(' | ')+(i?`; consultar depois de ${fmt(w.e+120)}`:''));
-    rr.innerHTML=`<span class="w">Janela <b>${fmt(w.s)}</b> até <b>${fmt(qs[qs.length-1][1])}</b>${i&&w.info!=='janela informada'?`<br>${esc(w.info)}`:''}</span>
+    rr.innerHTML=strip(w)+`<span class="w">Janela <b>${fmt(w.s)}</b> até <b>${fmt(qs[qs.length-1][1])}</b>${i&&w.info!=='janela informada'?`<br>${esc(w.info)}`:''}</span>
       <ul class="qs" aria-label="Consultas no Córtex para P${i+1}">${qs.map(([x,y],k)=>`<li class="q">${qs.length>1?`<b>${k+1}ª</b>`:''}${ddy(x)} ${hh(x)} às ${hh(y)}</li>`).join('')}</ul>
       ${i?`<span class="w">Consulte depois de <b>${fmt(w.e+120)}</b></span>`:''}`;
   });
@@ -654,7 +651,7 @@ function drawFiles(){
     <span class="pm${p.on?'':' off'}" aria-hidden="true">${no}</span>
     <div class="finfo"><span class="nm">${p.slot!=null?esc(rname(p.slot)):esc(p.loc)}</span><span class="cam">${esc(p.loc)}${p.files.length>1?`, ${p.files.length} consultas emendadas`:''}</span>
       <span class="rng"><b>${fmt(p.from)}</b> até <b>${fmt(p.to)}</b>, ${n2(p.rows.length)} passagens de ${n2(p.nPl)} placas</span>
-      <span class="cov ${c.k}">${c.k==='ok'?ICON_OK:c.k==='warn'?ICON_WARN:''}${esc(c.t)}</span></div>
+      ${strip(p.slot!=null&&winOf(p.slot).ok?winOf(p.slot):null,p)}<span class="cov ${c.k}">${c.k==='ok'?ICON_OK:c.k==='warn'?ICON_WARN:''}${esc(c.t)}</span></div>
     <label class="fld c-slot"><span class="lb">Ponto da rota</span><select data-f="slot" aria-label="Ponto da rota de ${esc(p.name)}">${opts(p.slot)}</select></label>
     <div class="fside"><label class="sw"><input type="checkbox" role="switch" data-f="on"${p.on?' checked':''} aria-label="Usar ${esc(p.name)} no cruzamento"> Usar</label><button class="btn quiet sm" type="button" data-rm aria-label="Tirar ${esc(p.name)}">Tirar</button></div></li>`}).join('');
   $('clear').hidden=!pts.length;
@@ -681,6 +678,18 @@ $('clear').onclick=()=>{
 
 /* ---------- Passo 3: cruzamento ---------- */
 // Linhas do gráfico e da tabela: pontos da rota e, depois, arquivos sem ponto (pela ordem do horário)
+function trange(){
+  let t0=Infinity,t1=-Infinity;
+  route.forEach((_,i)=>{const w=winOf(i);if(w.ok){t0=Math.min(t0,w.s);t1=Math.max(t1,w.e)}});
+  pts.forEach(p=>{t0=Math.min(t0,p.from);t1=Math.max(t1,p.to)});
+  if(!isFinite(t0))return null;
+  const pad=Math.max(30,(t1-t0)*.02);return {t0:t0-pad,t1:t1+pad};
+}
+// Mini-régua de tempo: a mesma escala do gráfico, para ver onde cada janela e cada arquivo caem
+function strip(w,f){
+  const r=trange();if(!r)return '';const P=t=>((t-r.t0)/(r.t1-r.t0)*100).toFixed(2);
+  return `<span class="strip" aria-hidden="true">${w?`<i style="left:${P(w.s)}%;width:${Math.max(.6,P(w.e)-P(w.s))}%"></i>`:''}${f?`<i class="f" style="left:${P(f.from)}%;width:${Math.max(.6,P(f.to)-P(f.from))}%"></i>`:''}</span>`;
+}
 function rowsAll(){
   const rows=route.map((r,i)=>({no:i+1,name:rname(i),km:num(r.km),win:winOf(i),pt:pts.find(p=>p.slot===i)||null}));
   pts.filter(p=>p.slot==null).sort((a,b)=>a.from-b.from).forEach((p,j)=>rows.push({no:route.length+j+1,name:p.loc,km:null,win:{ok:false},pt:p,loose:true}));
@@ -744,10 +753,10 @@ function render(){
   $('stepper').hidden=!R;
   if(!R){
     const anyWin=route.some((_,i)=>winOf(i).ok);
-    v.textContent=pts.length?'Carregue pelo menos 2 arquivos em uso para cruzar.':anyWin?'As faixas azuis são as janelas de consulta. Agora carregue os CSVs (passo 2).':'Defina a rota (passo 1) e carregue os CSVs (passo 2).';
+    v.textContent=pts.length?'Carregue pelo menos 2 arquivos em uso para cruzar.':anyWin?'As faixas azuis são as janelas de consulta. Agora carregue os CSVs.':'Defina a rota no passo 1 e carregue os CSVs no passo 2.';
   }else{
     const {use,steps,min,seq}=R, last=use.length-1;
-    if(upto<last) v.textContent=`Depois de ${lbl(use[upto])}, ${pl(steps[upto],'resta','restam')} ${n2(steps[upto])} das ${n2(steps[0])} placas que passaram em P${use[0].no}.`;
+    if(upto<last) v.textContent=upto===0?`P${use[0].no} ${use[0].name}: ${n2(steps[0])} placas passaram aqui.`:`${lbl(use[upto])}: ${pl(steps[upto],'resta','restam')} ${n2(steps[upto])} de ${n2(steps[0])} placas.`;
     else if(min<use.length) v.textContent=`${n2(n)} ${pl(n,'placa passou','placas passaram')} em pelo menos ${min} dos ${use.length} pontos${seq?', na ordem':''}.`;
     else if(n) v.textContent=`${n2(n)} ${pl(n,'placa passou','placas passaram')} pelos ${use.length} pontos${seq?', na ordem':''}.`;
     else {v.textContent=`Nenhuma placa passou pelos ${use.length} pontos${seq?' na ordem':''}.`;v.classList.add('zero')}
@@ -770,7 +779,7 @@ function render(){
   if(warn.length)items.push(`A consulta de ${warn.map(p=>'P'+(p.slot+1)).join(', ')} não cobre a janela inteira (passo 2).`);
   if(off.length)items.push(`${off.length} ${pl(off.length,'arquivo está','arquivos estão')} fora do cruzamento.`);
   if(loose.length)items.push(`${loose.length} ${pl(loose.length,'arquivo está','arquivos estão')} sem ponto na rota, na ordem do horário.`);
-  $('checks').innerHTML=items.map(x=>`<li>${esc(x)}</li>`).join('');
+  $('checks').innerHTML=items.map(x=>`<li><label><input type="checkbox"> ${esc(x)}</label></li>`).join('');
   renderTable();
   const msgs=[];
   if(seq&&outOfOrder) msgs.push(outOfOrder>1?`${n2(outOfOrder)} placas passaram nos pontos, mas fora da ordem da rota, e ficaram fora da lista.`:'1 placa passou nos pontos, mas fora da ordem da rota, e ficou fora da lista.');
@@ -801,98 +810,108 @@ function drawChart(){
   svg.innerHTML='';
   const desc=[];
   if(!rows.length){
-    svg.setAttribute('viewBox',`0 0 ${W} 160`);svg.setAttribute('height',160);
-    el('text',{x:W/2,y:84,'text-anchor':'middle',class:'empty'},svg,'O gráfico aparece quando a rota tiver janelas ou houver arquivos carregados.');
+    svg.setAttribute('viewBox',`0 0 ${W} 180`);svg.setAttribute('height',180);
+    el('text',{x:W/2,y:94,'text-anchor':'middle',class:'empty'},svg,'O gráfico aparece quando a rota tiver janelas ou houver arquivos carregados.');
     $('g-desc').textContent='Gráfico vazio.';$('chartnote').hidden=true;return;
   }
-  const L=narrow?104:210,Rm=narrow?40:110,T=44,B=24,NMAX=narrow?11:22;
+  const L=narrow?118:286,Rm=narrow?44:150,T=narrow?44:54,B=narrow?24:30,NMAX=narrow?10:21,LH=narrow?17:25;
   // Eixo vertical: km da rota quando todos os pontos têm km; senão, espaçamento igual
   const useKm=rows.every(r=>r.km!=null)&&new Set(rows.map(r=>r.km)).size>1;
   const kms=rows.map(r=>r.km), kmin=Math.min(...kms), kmax=Math.max(...kms);
   const groups=[];// pontos no mesmo km dividem a mesma linha
   rows.forEach(r=>{const g=useKm&&groups.find(x=>x.km===r.km);if(g)g.rows.push(r);else groups.push({km:r.km,rows:[r]})});
-  const span=Math.max(260,groups.length*70);
-  let y=T+20;
+  // Na tela larga o gráfico ocupa o que sobra da altura da janela (projetor 1280×720 inclusive)
+  let H;
+  if(narrow) H=T+groups.length*64+B+20;
+  else{const top=svg.getBoundingClientRect().top+window.scrollY;H=Math.max(400,Math.min(760,window.innerHeight-top-84))}
+  const y0=T+26, extra=LH*(groups[groups.length-1].rows.length-1), y1=H-B-14-extra, gapMin=g=>Math.max(narrow?44:52,LH*g.rows.length+16);
   groups.forEach((g,i)=>{
-    const yk=useKm?T+20+(g.km-kmin)/(kmax-kmin||1)*span:y;
-    g.y=i?Math.max(yk,groups[i-1].y+Math.max(52,18*groups[i-1].rows.length+26)):yk;y=g.y+64;
+    const yk=useKm?y0+(g.km-kmin)/(kmax-kmin||1)*(y1-y0):y0+(groups.length>1?i/(groups.length-1):0)*(y1-y0);
+    g.y=i?Math.max(yk,groups[i-1].y+gapMin(groups[i-1])):yk;
     g.rows.forEach(r=>r.y=g.y);
   });
-  const H=groups[groups.length-1].y+18*(groups[groups.length-1].rows.length-1)+30+B;
+  H=Math.max(H,groups[groups.length-1].y+extra+B+14);
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('height',H);
   // Eixo do tempo
-  let t0=Infinity,t1=-Infinity;
-  rows.forEach(r=>{if(r.win.ok){t0=Math.min(t0,r.win.s);t1=Math.max(t1,r.win.e)}if(r.pt){t0=Math.min(t0,r.pt.from);t1=Math.max(t1,r.pt.to)}});
-  const pad=Math.max(30,(t1-t0)*.02);t0-=pad;t1+=pad;
+  const tr=trange(), t0=tr.t0, t1=tr.t1;
   const X=t=>L+(t-t0)/(t1-t0)*(W-L-Rm);
+  // Noite (18h às 6h), como no gráfico de circulação: o caso "sai à noite" aparece no papel
+  for(let d=Math.floor(t0/1440)*1440-1440;d<t1;d+=1440){const a=Math.max(t0,d+1080),b=Math.min(t1,d+1440+360);if(b>a)el('rect',{x:X(a),y:T-4,width:X(b)-X(a),height:H-B-T+4,class:'night'},svg)}
   const spanH=(t1-t0)/60, stepH=[1,2,3,6,12,24,48].find(s=>spanH/s<=(narrow?5:12))||72;
   const gTicks=el('g',{},svg);
   for(let t=Math.ceil(t0/(stepH*60))*stepH*60;t<=t1;t+=stepH*60){
     const mid=t%1440===0, g=el('g',{class:'tick'+(mid?' mid':'')},gTicks), x=X(t);
     el('line',{x1:x,x2:x,y1:T-6,y2:H-B},g);
-    if(mid||stepH>=24) el('text',{x,y:T-24,'text-anchor':'middle',class:'day'},g,dd(t));
+    if(mid||stepH>=24) el('text',{x,y:T-(narrow?24:28),'text-anchor':'middle',class:'day'},g,dd(t));
     el('text',{x,y:T-10,'text-anchor':'middle'},g,`${new Date(t*MIN).getUTCHours()}h`);
   }
   // Estações: linha, nome e km
   groups.forEach(g=>{
-    const off=g.rows.every(r=>!r.pt||!r.pt.on), gg=el('g',{class:'st'+(off?' off':'')},svg);
+    const off=g.rows.every(r=>!r.pt||!r.pt.on), gg=el('g',{class:'st'+(off?' off':'')},svg), n=g.rows.length;
     el('line',{x1:L-8,x2:W-Rm+8,y1:g.y,y2:g.y},gg);
     g.rows.forEach((r,j)=>{
-      r.ly=g.y-6+j*18-(g.rows.length-1)*9;r.cy=g.rows.length>1?r.ly+2:g.y+5;
-      const tx=el('text',{x:L-(narrow?10:16),y:r.ly,'text-anchor':'end',class:'nm'},gg);
-      tx.textContent=`P${r.no} ${r.name.length>NMAX?r.name.slice(0,NMAX-1)+'…':r.name}`;
+      r.ly=g.y-(narrow?5:7)+j*LH-(n-1)*LH/2;r.cy=n>1?r.ly+(narrow?1:2):g.y+(narrow?5:8);
+      el('text',{x:L-(narrow?10:18),y:r.ly,'text-anchor':'end',class:'nm'},gg,`P${r.no} ${r.name.length>NMAX?r.name.slice(0,NMAX-1)+'…':r.name}`);
     });
-    if(g.km!=null) el('text',{x:L-(narrow?10:16),y:g.y+12+(g.rows.length-1)*9,'text-anchor':'end',class:'km'},gg,`km ${n2(g.km)}`);
+    if(g.km!=null) el('text',{x:L-(narrow?10:18),y:g.y+(narrow?12:17)+(n-1)*LH/2,'text-anchor':'end',class:'km'},gg,`km ${n2(g.km)}`);
   });
-  // Janelas (faixas) e passagens (densidade)
+  // Janelas (faixas) e passagens (densidade, na metade de baixo da faixa)
+  const bh=narrow?11:13;
   rows.forEach(r=>{
-    if(r.win.ok){el('rect',{x:X(r.win.s),y:r.y-11,width:Math.max(3,X(r.win.e)-X(r.win.s)),height:22,rx:3,class:'band'},svg);desc.push(`P${r.no} ${r.name}: janela de ${fmt(r.win.s)} a ${fmt(r.win.e)}.`)}
+    if(r.win.ok){el('rect',{x:X(r.win.s),y:r.y-bh,width:Math.max(3,X(r.win.e)-X(r.win.s)),height:bh*2,rx:3,class:'band'},svg);desc.push(`P${r.no} ${r.name}: janela de ${fmt(r.win.s)} a ${fmt(r.win.e)}.`)}
     if(r.pt){
       const bin=Math.max(10,Math.round((t1-t0)/240)), cnt={};let mx=0;
       r.pt.rows.forEach(x=>{const b=Math.floor(x.t/bin);cnt[b]=(cnt[b]||0)+1;if(cnt[b]>mx)mx=cnt[b]});
       let d='';const bw=Math.max(1.2,X(bin)-X(0)-.6);
-      for(const b in cnt){const x=X(b*bin),h=3+cnt[b]/mx*13;d+=`M${x.toFixed(1)} ${r.y+11}h${bw.toFixed(1)}v${(-h).toFixed(1)}h${(-bw).toFixed(1)}z`}
-      el('path',{d,class:'dens',opacity:r.pt.on?.85:.35},svg);
+      for(const b in cnt){const x=X(b*bin),h=2+cnt[b]/mx*(bh-4);d+=`M${x.toFixed(1)} ${r.y+bh}h${bw.toFixed(1)}v${(-h).toFixed(1)}h${(-bw).toFixed(1)}z`}
+      el('path',{d,class:'dens',opacity:r.pt.on?.9:.35},svg);
     }
   });
-  // Linhas das placas
   $('chartnote').hidden=true;
   if(R){
     const {use,base,get,steps}=R, k=upto, rU=use.map(u=>rows.find(r=>r.pt===u.pt)||{}), yU=rU.map(r=>r.y);
     const gGone=el('g',{},svg), gLive=el('g',{},svg), gFocus=el('g',{},svg);
     const alive=[], dead=[];
     base.forEach(p=>{const b=get(p).broke;(b<0||b>k?alive:dead).push(p)});
-    const path=(p,upTo)=>{const info=get(p).info,pts2=[];for(let i=0;i<=upTo;i++)if(info[i]!=null)pts2.push([X(info[i]),yU[i]]);return pts2};
-    const notes=[];
-    if(dead.length<=600){dead.forEach(p=>{const b=get(p).broke,ps=path(p,b-1);if(ps.length>1)el('polyline',{points:ps.map(q=>q.join(',')).join(' '),class:'gone','data-pl':p},gGone);if(ps.length)el('circle',{cx:ps[ps.length-1][0],cy:ps[ps.length-1][1],r:2.6,class:'gone-d','data-pl':p},gGone)})}
-    else notes.push(`${n2(dead.length)} placas eliminadas não foram desenhadas, para o gráfico continuar legível.`);
-    const drawAlive=alive.slice(0,300);if(alive.length>300)notes.push(`Desenhadas 300 de ${n2(alive.length)} placas que seguem na lista.`);
-    const animate=prevUpto!=null&&prevUpto<k&&!reduce();
+    // Placa em foco: a escolhida na tabela, ou a única que sobrou neste ponto. Antes disso, nada de vermelho.
+    let fp=null;
+    if(picked&&selPl&&get(selPl))fp=selPl;else if(alive.length===1)fp=alive[0];
+    const path=(p,upTo)=>{const info=get(p).info,o=[];for(let i=0;i<=upTo;i++)if(info[i]!=null)o.push([X(info[i]),yU[i],info[i],i]);return o};
+    const pts2=ps=>ps.map(q=>q[0].toFixed(1)+','+q[1]).join(' ');
+    const fwd=prevUpto!=null&&prevUpto<k&&!reduce(), notes=[];
+    if(dead.length<=600){
+      dead.forEach(p=>{const b=get(p).broke,ps=path(p,b-1),cls=fwd&&b===k?' dying':'';if(!ps.length)return;
+        if(ps.length>1)el('polyline',{points:pts2(ps),class:'gone'+cls,'data-pl':p},gGone);
+        const [x,y]=ps[ps.length-1],s=narrow?3:4.5;el('path',{d:`M${x-s} ${y-s}L${x+s} ${y+s}M${x-s} ${y+s}L${x+s} ${y-s}`,class:'gone-x'+cls,'data-pl':p},gGone)});
+    }else notes.push(`${n2(dead.length)} placas eliminadas não foram desenhadas, para o gráfico continuar legível.`);
+    const drawAlive=alive.filter(p=>p!==fp).slice(0,300);if(alive.length>301)notes.push(`Desenhadas 300 de ${n2(alive.length)} placas que seguem na lista.`);
     drawAlive.forEach(p=>{
       const ps=path(p,k);
-      if(ps.length>1){const lnk=el('polyline',{points:ps.map(q=>q.join(',')).join(' '),class:'live','data-pl':p},gLive);
-        if(animate){const seg=el('polyline',{points:ps.slice(-2).map(q=>q.join(',')).join(' '),class:'live grow',pathLength:1,'data-pl':p},gLive);lnk.setAttribute('points',ps.slice(0,-1).map(q=>q.join(',')).join(' '))}}
-      if(ps.length===1)el('circle',{cx:ps[0][0],cy:ps[0][1],r:3,class:'live-d','data-pl':p},gLive);
+      if(ps.length>1){
+        if(fwd){el('polyline',{points:pts2(ps.slice(0,-1)),class:'live','data-pl':p},gLive);el('polyline',{points:pts2(ps.slice(-2)),class:'live grow',pathLength:1,'data-pl':p},gLive)}
+        else el('polyline',{points:pts2(ps),class:'live','data-pl':p},gLive);
+      }else if(ps.length)el('circle',{cx:ps[0][0],cy:ps[0][1],r:narrow?2.5:3.2,class:'live-d','data-pl':p},gLive);
     });
-    // Placa em foco: a primeira da lista, ou a escolhida na tabela
-    if(!R.hits.find(h=>h.pl===selPl))selPl=R.hits.length?sortedHits()[0].pl:null;
-    if(selPl&&R.get(selPl)){
-      const info=get(selPl).info, last=k, ps=[];
-      for(let i=0;i<=last;i++)if(info[i]!=null)ps.push([X(info[i]),yU[i],info[i],i]);
+    if(fp){
+      const ps=path(fp,k), txt=show(fp);
       if(ps.length){
-        const ln=el('polyline',{points:ps.map(q=>q[0]+','+q[1]).join(' '),class:'focus'+(animate?' grow':''),...(animate?{pathLength:1}:{})},gFocus);
-        ps.forEach((q,i)=>{el('circle',{cx:q[0],cy:q[1],r:5.5,class:'focus-d'},gFocus);el('text',{x:q[0]+(i%2?-9:9),y:q[1]+(i%2?24:-12),'text-anchor':i%2?'end':'start',class:'ft'},gFocus,hh(q[2]))});
-        const lq=ps[ps.length-1], tag=el('g',{class:'ftag'},gFocus), txt=show(selPl), tw=txt.length*8.6+14;
-        const tx=Math.min(lq[0]+10,W-Rm-tw-4), ty=lq[1]+12;
-        el('rect',{x:tx,y:ty,width:tw,height:20,rx:3},tag);el('text',{x:tx+7,y:ty+14.5},tag,txt);
+        el('polyline',{points:pts2(ps),class:'focus'+(fwd?' grow':''),...(fwd?{pathLength:1}:{})},gFocus);
+        // Velocidade de cada trecho, onde há km: a inclinação da linha é a velocidade
+        ps.forEach((q,i)=>{if(!i)return;const a=ps[i-1],ua=use[a[3]],ub=use[q[3]];
+          if(ua.km!=null&&ub.km!=null&&ub.km!==ua.km&&q[2]>a[2]){const v=Math.round(Math.abs(ub.km-ua.km)/((q[2]-a[2])/60));
+            el('text',{x:(a[0]+q[0])/2+(narrow?6:10),y:(a[1]+q[1])/2-4,class:'spd'},gFocus,`${v} km/h`)}});
+        ps.forEach((q,i)=>{el('circle',{cx:q[0],cy:q[1],r:narrow?4.5:6.5,class:'focus-d'},gFocus);el('text',{x:q[0]+(i%2?-10:10),y:q[1]+(i%2?(narrow?20:30):-(narrow?10:14)),'text-anchor':i%2?'end':'start',class:'ft'},gFocus,hh(q[2]))});
+        const lq=ps[ps.length-1], tag=el('g',{class:'ftag'},gFocus), cw=narrow?7.4:11, th=narrow?18:26, tw=txt.length*cw+(narrow?12:18);
+        const tx=Math.min(lq[0]+12,W-Rm-tw-4), ty=Math.min(lq[1]+(narrow?10:14),H-th-2);
+        el('rect',{x:tx,y:ty,width:tw,height:th,rx:3},tag);el('text',{x:tx+(narrow?6:9),y:ty+th*.72},tag,txt);
         desc.push(`Placa em foco ${txt}: `+ps.map(q=>`${lbl(use[q[3]])} às ${fmt(q[2])}`).join(', ')+'.');
       }
     }
     // Contagem à direita: quantas placas restam depois de cada ponto
     use.forEach((u,i)=>{
-      const t=el('text',{x:W-Rm+(narrow?8:16),y:rU[i].cy,class:'cnt'+(i===k?' last':'')},svg);
-      if(i<=k){el('tspan',{class:'v'},t,n2(steps[i]));if(!narrow)el('tspan',{dx:5},t,pl(steps[i],'resta','restam'))}
-      else{t.textContent='–'}
+      const t=el('text',{x:W-Rm+(narrow?8:18),y:rU[i].cy,class:'cnt'+(i===k?' cur':'')},svg);
+      if(i<=k){el('tspan',{class:'v'},t,n2(steps[i]));if(!narrow)el('tspan',{dx:6},t,pl(steps[i],'resta','restam'))}
+      else t.textContent='–';
     });
     desc.push(`Restam por ponto: ${use.map((u,i)=>`P${u.no} ${n2(steps[i])}`).join(', ')}.`);
     if(notes.length){$('chartnote').hidden=false;$('chartnote').textContent=notes.join(' ')}
@@ -900,7 +919,7 @@ function drawChart(){
   $('g-desc').textContent=`Eixo horizontal: tempo. Eixo vertical: ${useKm?'km da rota':'pontos na ordem'}. `+desc.join(' ');
 }
 $('chart').addEventListener('click',e=>{const t=e.target.closest('[data-pl]');if(t&&R&&R.hits.find(h=>h.pl===t.dataset.pl))choose(t.dataset.pl)});
-let rzT;new ResizeObserver(()=>{clearTimeout(rzT);rzT=setTimeout(()=>{const w=$('chart').parentElement.clientWidth;if(Math.abs(Math.max(300,w)-chartW)>4)drawChart()},120)}).observe($('chart').parentElement);
+let rzT,lastH=innerHeight;const redraw=()=>{clearTimeout(rzT);rzT=setTimeout(()=>{const w=$('chart').parentElement.clientWidth;if(Math.abs(Math.max(300,w)-chartW)>4||Math.abs(innerHeight-lastH)>20){lastH=innerHeight;drawChart()}},120)};new ResizeObserver(redraw).observe($('chart').parentElement);addEventListener('resize',redraw);
 
 /* ---------- Tabela de placas e trajeto ---------- */
 const ARROW='<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -911,9 +930,10 @@ function sortedHits(){
 }
 function renderTable(){
   const {use}=R, rows=sortedHits();
+  if(!rows.find(r=>r.pl===selPl)){selPl=rows[0]?rows[0].pl:null;picked=false}
   const th=(k,label,attr='')=>{const on=sortK===k;return `<th scope="col" aria-sort="${on?(sortD>0?'ascending':'descending'):'none'}"${attr}><button class="sort" type="button" data-sort="${k}"><span>${label}</span><span class="ar">${on?ARROW:''}</span></button></th>`};
-  const head=`<thead><tr><th scope="col">#</th>${th('pl','Placa')}<th scope="col">Veículo</th><th scope="col">UF</th>${th('n','Pontos')}${use.map((u,i)=>th(String(i),`P${u.no}<span class="thl">${esc(u.name)}</span>`,` title="${esc(u.pt.loc)}"`)).join('')}</tr></thead>`;
-  const body=rows.slice(0,500).map((r,i)=>`<tr data-pl="${esc(r.pl)}"${r.pl===selPl?' class="sel"':''}><td>${i+1}</td><td><button class="pl" type="button" aria-pressed="${r.pl===selPl}">${plate(r.pl)}<span class="sr">: mostrar trajeto</span></button></td><td>${esc(r.m)}${r.c?', '+esc(r.c):''}</td><td>${esc(r.u)}</td><td><span class="hits" aria-hidden="true">${r.info.map(d=>`<i class="${d!=null?'on':''}"></i>`).join('')}</span>${r.n} de ${use.length}</td>${r.info.map(d=>d!=null?`<td class="t"><span class="dt">${dd(d)}</span>${hh(d)}</td>`:'<td class="miss"><span aria-hidden="true">–</span><span class="sr">não passou</span></td>').join('')}</tr>`).join('');
+  const head=`<thead><tr><th scope="col">#</th>${th('pl','Placa')}<th scope="col">Veículo</th><th scope="col">UF</th>${th('n','Pontos')}${use.map((u,i)=>th(String(i),`P${u.no}<span class="sr"> ${esc(u.name)}</span>`,` title="P${u.no} ${esc(u.name)}"`)).join('')}</tr></thead>`;
+  const body=rows.slice(0,500).map((r,i)=>`<tr data-pl="${esc(r.pl)}"${r.pl===selPl?' class="sel"':''}><td>${i+1}</td><td><button class="pl" type="button" aria-pressed="${r.pl===selPl}">${plate(r.pl)}<span class="sr">: mostrar trajeto</span></button></td><td class="veh">${esc(r.m)}${r.c?', '+esc(r.c):''}</td><td>${esc(r.u)}</td><td><span class="hits" aria-hidden="true">${r.info.map(d=>`<i class="${d!=null?'on':''}"></i>`).join('')}</span>${r.n} de ${use.length}</td>${r.info.map(d=>d!=null?`<td class="t"><span class="dt">${dd(d)}</span>${hh(d)}</td>`:'<td class="miss"><span aria-hidden="true">–</span><span class="sr">não passou</span></td>').join('')}</tr>`).join('');
   $('tbl').innerHTML=rows.length?head+`<tbody>${body}</tbody>`:'';
   $('tbl').closest('.tblw').hidden=!rows.length;$('tbl-t').hidden=!rows.length;
   renderLegs();
@@ -924,7 +944,7 @@ $('tbl').addEventListener('click',e=>{
   const tr=e.target.closest('tr[data-pl]');if(tr)choose(tr.dataset.pl);
 });
 function choose(p){
-  selPl=p;
+  selPl=p;picked=true;
   $('tbl').querySelectorAll('tr[data-pl]').forEach(x=>{const on=x.dataset.pl===selPl;x.classList.toggle('sel',on);x.querySelector('.pl').setAttribute('aria-pressed',on)});
   renderLegs();drawChart();
   say(`Placa ${show(p)} em foco no gráfico.`);
@@ -960,11 +980,11 @@ $('exp').onclick=()=>{
 
 /* ---------- Exemplo, começo do zero e estado ---------- */
 function updateStatus(){
-  $('status').innerHTML=example?'Exemplo carregado<small>Caso 1, dados fictícios</small>':`${pts.length?`${pts.length} ${pl(pts.length,'arquivo','arquivos')} carregados`:'Seu caso'}<small>${route.length} ${pl(route.length,'ponto','pontos')} na rota</small>`;
+  $('status').innerHTML=example?'<b>Exemplo:</b> Caso 1, dados fictícios':`<b>Seu caso:</b> ${route.length} ${pl(route.length,'ponto','pontos')} na rota, ${pts.length} ${pl(pts.length,'arquivo','arquivos')}`;
   $('ex-load').hidden=example;
 }
 function loadExample(){
-  example=true;route.length=0;DEMO_ROUTE.forEach(r=>route.push({...r}));
+  example=true;picked=false;route.length=0;DEMO_ROUTE.forEach(r=>route.push({...r}));
   pts.length=0;selPl=null;upto=null;sortK='n';sortD=-1;userMin=false;
   Object.entries(DEMO).forEach(([n,t])=>addText(n,t,DEMO_SLOT[n]));
   msg('');drawRoute();drawFiles();
@@ -975,7 +995,7 @@ $('ex-load').onclick=()=>{
   if(snap.pts.length||snap.route.some(r=>r.name||r.dep0||r.h||r.w0))msg('O Caso 1 substituiu a rota e os arquivos.','',{label:'Desfazer',fn:()=>{example=false;route.length=0;route.push(...snap.route);pts.length=0;pts.push(...snap.pts);drawRoute();drawFiles();msg('Seu caso voltou.')}});
   $('verdict').scrollIntoView({behavior:reduce()?'auto':'smooth',block:'center'});
 };
-$('reset').onclick=()=>{
+$('reset').onclick=()=>{picked=false;
   const snap={route:route.map(r=>({...r})),pts:pts.slice(),example};
   example=false;route.length=0;freshRoute();pts.length=0;selPl=null;upto=null;
   drawRoute();drawFiles();
