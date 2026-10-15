@@ -903,7 +903,7 @@ function nowBR(){return Math.floor(Date.now()/MIN)-180}
 function ready(t){
   const left=t-nowBR();
   return `Faça a consulta no Córtex a partir de <b>${dd(t)} ${hh(t)}</b>; antes disso, as passagens podem ainda não ter chegado.`+
-    (left<=0?' <span class="go-ok">Já pode consultar.</span>':` <span class="go-wait">Ainda não: faltam ${hm(left)}.</span>`);
+    (left<=0?' <span class="go-ok">Já pode consultar.</span>':left>2880?'':` <span class="go-wait">Ainda não: faltam ${hm(left)}.</span>`);
 }
 function winHtml(no,name,info,s,e,late){
   const qs=queries(s,e); e=qs[qs.length-1][1];
