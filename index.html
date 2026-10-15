@@ -234,6 +234,29 @@ tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--sign)}
 .tab[aria-selected="true"]{background:var(--road);color:var(--panel)}
 .tab[aria-selected="true"] .no{background:var(--sign);color:var(--signink)}
 .view{display:grid;gap:18px}
+/* Consulta simulada */
+.simban{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:10px 14px;border-radius:10px;border:1px dashed var(--signink);background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--sign) 22%,var(--panel)) 0 14px,color-mix(in srgb,var(--sign) 12%,var(--panel)) 14px 28px);color:var(--ink);font-size:.9375rem;box-shadow:var(--shadow)}
+.brief p{margin:0 0 8px;max-width:72ch}.brief p:last-child{margin:0}
+.calc-grid.simq{grid-template-columns:minmax(0,2.2fr) repeat(3,minmax(0,1fr)) auto;align-items:end}
+.simq .fld input,.simq select,.vq input{width:100%;min-width:0}
+.qgo .btn{min-height:42px}
+.vq{display:flex;flex-wrap:wrap;gap:14px;align-items:end}.vq .fld{flex:0 1 240px}
+.vq input{text-transform:uppercase;font-family:var(--f-mono)}
+.sumline{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:16px 0 12px}
+.sumline p{margin:0;flex:1 1 280px;min-width:0}
+.sumline .btns{margin-left:auto}
+.vcar{margin:16px 0 12px}
+#s-tbl,#v-tbl,#g-tbl{width:100%;border-collapse:collapse;font-size:.875rem;font-variant-numeric:tabular-nums}
+#s-tbl th,#v-tbl th,#g-tbl th{position:sticky;top:0;background:var(--soft);text-align:left;font-weight:600;color:var(--mut);padding:8px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+#s-tbl td,#v-tbl td,#g-tbl td{padding:7px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+#s-tbl td:first-child,#v-tbl .pl{font-family:var(--f-mono);font-weight:500;white-space:nowrap}
+#s-tbl .dt,#v-tbl .dt{white-space:nowrap}
+#v-tbl tr.hit td{background:color-mix(in srgb,var(--sign) 14%,var(--panel))}
+#g-tbl .btn{margin:2px 6px 2px 0}
+.prof{border-color:var(--sign);border-style:dashed}
+.ferr2{color:var(--warn)}
+@media (max-width:900px){.calc-grid.simq{grid-template-columns:repeat(3,minmax(0,1fr))}.simq .wide{grid-column:1/-1}.simq .qgo{grid-column:1/-1}}
+@media (max-width:520px){.calc-grid.simq{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.simq label:nth-of-type(2){grid-column:1/-1}.qgo .btn{flex:1}}
 .view[hidden]{display:none}
 .view>*{min-width:0}
 /* Calculadora */
@@ -330,7 +353,8 @@ fieldset.fld legend{padding:0;margin-bottom:5px}
 <main class="wrap" id="main" tabindex="-1">
 <div class="tabs" id="tabs" role="tablist" aria-label="Ferramentas">
   <button class="tab" role="tab" id="t-jan" aria-controls="v-jan" aria-selected="true" type="button"><span class="no" aria-hidden="true">1</span>Calcular janelas</button>
-  <button class="tab" role="tab" id="t-cru" aria-controls="v-cru" aria-selected="false" type="button"><span class="no" aria-hidden="true">2</span>Cruzar placas</button>
+  <button class="tab" role="tab" id="t-sim" aria-controls="v-sim" aria-selected="false" type="button"><span class="no" aria-hidden="true">2</span>Consulta simulada</button>
+  <button class="tab" role="tab" id="t-cru" aria-controls="v-cru" aria-selected="false" type="button"><span class="no" aria-hidden="true">3</span>Cruzar placas</button>
 </div>
 
 <div class="view" id="v-jan" role="tabpanel" aria-labelledby="t-jan">
@@ -348,13 +372,62 @@ fieldset.fld legend{padding:0;margin-bottom:5px}
 <section class="panel" aria-labelledby="c2">
   <div class="ph"><h2 id="c2">Tempo até cada ponto</h2><span class="ct">tempo do Maps a partir da saída</span></div>
   <ol class="cpts" id="cpts"></ol>
-  <div class="btns addpt"><button class="btn" id="addpt" type="button">Adicionar ponto</button><button class="btn quiet" id="c-demo" type="button">Preencher com o Caso 1</button></div>
+  <div class="btns addpt"><button class="btn" id="addpt" type="button">Adicionar ponto</button><button class="btn quiet" id="c-demo" type="button" hidden>Preencher com o Caso 1</button></div>
   <p class="rule"><b>Regra:</b> a cada 3 horas de estrada, some 1 hora de parada. A janela começa na primeira saída + tempo com paradas e termina na última saída + tempo com paradas + folga. A folga sugerida é 1/3 do tempo, e você pode mudar.</p>
 </section>
 <section class="panel" aria-labelledby="c3">
   <div class="ph"><h2 id="c3">Consultas para o Córtex</h2><button class="btn sm" id="copy" type="button">Copiar consultas</button></div>
   <ol class="wins" id="wins"></ol>
   <p class="cnote">O Córtex 1.0 aceita uma data por consulta: janela que passa da meia-noite vira duas consultas na mesma câmera. Carregue as duas no Cruzador, que junta as duas num ponto só. As passagens chegam ao Córtex em lotes, com 1 a 2 horas de atraso: cada ponto mostra a partir de que horas a consulta já traz tudo.</p>
+</section>
+</div>
+
+<div class="view" id="v-sim" role="tabpanel" aria-labelledby="t-sim" hidden>
+<p class="simban" role="note"><span class="tagf">Simulação</span><span><b>Dados fictícios</b> do Caso 1, só para treino. Nenhuma consulta aqui é real e nenhuma placa existe.</span></p>
+<section class="panel" aria-labelledby="m0">
+  <div class="ph"><h2 id="m0">Caso 1 · o que se sabe</h2><span class="ct">informe fictício</span></div>
+  <div class="brief">
+    <p>Um veículo saiu do DF <b>entre 18h de 10/11 e 0h de 11/11</b>, rumo a <b>Ponta Porã (MS)</b>, pela BR-060 e pela BR-463. A suspeita é de bate e volta: fica poucas horas na fronteira e volta para o DF. A placa é desconhecida.</p>
+    <p><b>Tarefa:</b> calcule as janelas na aba 1, consulte cada câmera aqui, mande os arquivos para o Cruzador e descubra a placa. Depois confira o histórico dela no fim desta aba.</p>
+  </div>
+</section>
+<section class="panel" aria-labelledby="m1">
+  <div class="ph"><h2 id="m1">Consulta de passagens</h2><span class="ct">hora de Brasília · 10 a 13/11/2026</span></div>
+  <form class="calc-grid simq" id="simq" novalidate>
+    <label class="fld wide">Câmera<select id="s-cam" required><option value="">Escolha a câmera</option></select></label>
+    <label class="fld">Data<input type="date" id="s-day" min="2026-11-10" max="2026-11-13" value="2026-11-10" required></label>
+    <label class="fld">Hora inicial<input type="time" id="s-h0" value="00:00" required></label>
+    <label class="fld">Hora final<input type="time" id="s-h1" value="23:59" required></label>
+    <div class="btns qgo"><button class="btn pri" id="s-go" type="submit">Consultar</button></div>
+  </form>
+  <p class="rule">Uma data por consulta, como no Córtex 1.0. Se a janela passa da meia-noite, faça uma consulta até 23:59 e outra a partir de 00:00 do dia seguinte. O Cruzador junta as duas num ponto só.</p>
+  <div class="fmsg" id="s-msg" role="status" aria-live="polite" hidden></div>
+  <div id="s-res" hidden>
+    <div class="sumline"><p id="s-sum"></p>
+      <div class="btns"><button class="btn pri" id="s-send" type="button">Mandar para o Cruzador</button><button class="btn" id="s-csv" type="button">Baixar CSV</button></div>
+    </div>
+    <div class="tbl" role="region" aria-labelledby="s-sum" tabindex="0"><table id="s-tbl"></table></div>
+    <p class="hintline" id="s-more" hidden></p>
+  </div>
+</section>
+<section class="panel" aria-labelledby="m2">
+  <div class="ph"><h2 id="m2">Histórico do veículo</h2><span class="ct">simulado</span></div>
+  <form class="vq" id="vq" novalidate>
+    <label class="fld">Placa<input id="v-pl" placeholder="Ex.: ABC1D23" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="8"></label>
+    <div class="btns qgo"><button class="btn" id="v-go" type="submit">Ver histórico</button></div>
+  </form>
+  <p class="rule">Mostra todas as passagens da placa, em qualquer câmera e qualquer dia. Use depois do cruzamento para ver se a viagem se repete.</p>
+  <div class="fmsg" id="v-msg" role="status" aria-live="polite" hidden></div>
+  <div id="v-res" hidden>
+    <p class="vcar" id="v-car"></p>
+    <div class="tbl" role="region" aria-labelledby="v-car" tabindex="0"><table id="v-tbl"></table></div>
+  </div>
+</section>
+<section class="panel prof" id="gab" aria-labelledby="m3" hidden>
+  <div class="ph"><h2 id="m3">Gabarito do professor</h2><span class="ct">só aparece com o link do professor</span></div>
+  <div class="tbl" role="region" aria-labelledby="m3" tabindex="0"><table id="g-tbl"></table></div>
+  <p class="rule"><b>Resultado esperado:</b> com os 5 pontos, na ordem, sobra só a <b>SGX4D17</b>. A BCN2F86 passa em P1, P2 e P3 e não volta. A REK8H52 passa em P1 e P2, mas chega à fronteira às 11:50, antes da janela. As armadilhas são o sentido trocado (Rio Verde Jataí → Goiânia, que pega a SGX4D17 só na volta) e a câmera de Acreúna, que não tem passagem nenhuma.</p>
+  <p class="rule">O link dos alunos é o mesmo endereço, sem o <b>#professor</b> no final.</p>
 </section>
 </div>
 
@@ -366,7 +439,7 @@ fieldset.fld legend{padding:0;margin-bottom:5px}
     <div class="dtx"><strong>Arraste os CSVs para cá</strong><span>Um CSV do Consulta Radares por ponto, de 2 a 10 pontos, com as colunas Placa e DataHoraPassagem. Duas consultas da mesma câmera com horários emendados viram um ponto só.</span></div>
     <div class="btns">
       <button class="btn pri" id="pick" type="button">Escolher arquivos</button>
-      <button class="btn" id="demo" type="button">Carregar exemplo (Caso 1)</button>
+      <button class="btn" id="demo" type="button" hidden>Carregar exemplo (Caso 1)</button>
       <button class="btn quiet" id="clear" type="button" hidden>Limpar tudo</button>
     </div>
   </div>
@@ -454,7 +527,8 @@ $('theme').onclick=()=>setTheme(THEMES[(THEMES.indexOf($('theme').dataset.t)+1)%
 setTheme(THEMES.includes(load('cruzador.tema'))?load('cruzador.tema'):'auto');
 
 /* ---------- Abas ---------- */
-const TABS=[['t-jan','v-jan'],['t-cru','v-cru']];
+const TABS=[['t-jan','v-jan'],['t-sim','v-sim'],['t-cru','v-cru']];
+const HASHTAB={'#cruzar':'t-cru','#simulador':'t-sim','#professor':'t-jan'};
 function tab(id,focus){TABS.forEach(([t,v])=>{const on=t===id;$(t).setAttribute('aria-selected',on);$(t).tabIndex=on?0:-1;$(v).hidden=!on});if(focus)$(id).focus()}
 TABS.forEach(([t])=>$(t).onclick=()=>tab(t));
 $('tabs').onkeydown=e=>{
@@ -462,7 +536,7 @@ $('tabs').onkeydown=e=>{
   if(e.key==='ArrowRight')j=(i+1)%TABS.length;else if(e.key==='ArrowLeft')j=(i+TABS.length-1)%TABS.length;
   else if(e.key==='Home')j=0;else if(e.key==='End')j=TABS.length-1;else return;
   e.preventDefault();tab(TABS[j][0],true)};
-tab(location.hash==='#cruzar'?'t-cru':'t-jan');
+tab(HASHTAB[location.hash]||'t-jan');
 
 /* ---------- Cruzador: estado ---------- */
 const pts=[];
@@ -533,7 +607,8 @@ function addText(name,text,meta){
     const p={name,files:[name],rows,loc,label:meta?meta.label:'',km:meta?meta.km:null,on:true,auto:false};
     index(p); pts.push(p);
   }
-  pts.sort((a,b)=>a.from-b.from);
+  // Ordena pelo meio da janela: duas janelas que começam juntas ficam na ordem de quem termina antes
+  pts.sort((a,b)=>(a.from+a.to)-(b.from+b.to));
   return {warn:r.bad?`<b>${esc(name)}</b>: ${r.bad} ${pl(r.bad,'linha','linhas')} sem data e hora válidas ficaram de fora.`:''};
 }
 function readFile(f){
@@ -900,13 +975,211 @@ function applyCalcNames(){
   pts.forEach((p,i)=>{if((!p.label||p.auto)&&names[i]){p.label=names[i];p.auto=true;used++}});
   return used;
 }
+/* ---------- Consulta simulada (Caso 1, dados fictícios) ---------- */
+// Tráfego de fundo gerado sempre igual (semente fixa), mais as passagens do Caso 1 do exemplo.
+const SIM_D0=Date.UTC(2026,10,10)/MIN, SIM_D1=Date.UTC(2026,10,14)/MIN;
+const SIM_CAMS=[
+  {loc:'BR-060 - KM 30 - SENT BRASILIA >> GOIANIA',pool:'df',day:5},
+  {loc:'BR-060 - KM 30 - SENT GOIANIA >> BRASILIA',pool:'df',day:5},
+  {loc:'BR-060 - KM 254 - ACREUNA - SENT GOIANIA >> JATAI',pool:null},
+  {loc:'BR-060 - KM 385 - RIO VERDE - SENT GOIANIA >> JATAI',pool:'rv',day:7},
+  {loc:'BR-060 - KM 385 - RIO VERDE - SENT JATAI >> GOIANIA',pool:'rv',day:7},
+  {loc:'BR-463 - KM 112 - SENT DOURADOS >> PONTA PORA',pool:'ms',day:6},
+  {loc:'BR-463 - KM 112 - SENT PONTA PORA >> DOURADOS',pool:'ms',day:6}];
+const SIM_MUN={
+  df:['BRASILIA/DF','BRASILIA/DF','BRASILIA/DF','BRASILIA/DF','BRASILIA/DF','GOIANIA/GO','GOIANIA/GO','ANAPOLIS/GO','LUZIANIA/GO','VALPARAISO DE GOIAS/GO','FORMOSA/GO','SAO PAULO/SP','BELO HORIZONTE/MG','UBERLANDIA/MG'],
+  rv:['RIO VERDE/GO','RIO VERDE/GO','RIO VERDE/GO','RIO VERDE/GO','JATAI/GO','JATAI/GO','GOIANIA/GO','GOIANIA/GO','MINEIROS/GO','RONDONOPOLIS/MT','CUIABA/MT','BRASILIA/DF','SAO PAULO/SP','CAMPO GRANDE/MS'],
+  ms:['PONTA PORA/MS','PONTA PORA/MS','PONTA PORA/MS','PONTA PORA/MS','DOURADOS/MS','DOURADOS/MS','DOURADOS/MS','CAMPO GRANDE/MS','CAMPO GRANDE/MS','MARACAJU/MS','ANTONIO JOAO/MS','CASCAVEL/PR','MARINGA/PR']};
+const SIM_MOD=['FIAT/STRADA FREEDOM CD','VW/GOL 1.0L MC4','CHEV/ONIX PLUS 10TAT PR2','HYUNDAI/HB20 1.0M SENSE','FIAT/ARGO DRIVE 1.0','TOYOTA/COROLLA XEI20FLEX','HONDA/CG 160 FAN','YAMAHA/FZ25 FAZER','VW/SAVEIRO CS TL MB','FIAT/TORO FREEDOM AT9','I/TOYOTA HILUX CD SRV4X4','RENAULT/KWID ZEN 10MT','JEEP/COMPASS LONGITUDE F','VW/T CROSS TSI','M.BENZ/ATEGO 2426','SCANIA/R450 A6X2','VOLVO/FH 540 6X4T','FORD/RANGER XLS CD4A22H','NISSAN/KICKS SV CVT','CHEVROLET/S10 LTZ DD4A'];
+const SIM_COR=['BRANCA','BRANCA','BRANCA','PRATA','PRATA','PRETA','PRETA','CINZA','VERMELHA','AZUL'];
+const SIM_HIST=`12/11/2026 19:35:14|BR-060 - KM 30 - SENT GOIANIA >> BRASILIA
+12/11/2026 13:52:36|BR-060 - KM 385 - RIO VERDE - SENT JATAI >> GOIANIA
+12/11/2026 03:15:21|BR-463 - KM 112 - SENT PONTA PORA >> DOURADOS
+11/11/2026 12:40:09|BR-463 - KM 112 - SENT DOURADOS >> PONTA PORA
+11/11/2026 01:25:12|BR-060 - KM 385 - RIO VERDE - SENT GOIANIA >> JATAI
+10/11/2026 20:10:27|BR-060 - KM 30 - SENT BRASILIA >> GOIANIA
+10/11/2026 19:26:44|EPNB - KM 4 - SENT NUCLEO BANDEIRANTE >> RIACHO FUNDO
+09/11/2026 19:12:24|EPNB - KM 4 - SENT NUCLEO BANDEIRANTE >> RIACHO FUNDO
+09/11/2026 18:47:38|EPTG - KM 8 - SENT PLANO PILOTO >> TAGUATINGA
+09/11/2026 07:29:11|EPTG - KM 8 - SENT TAGUATINGA >> PLANO PILOTO
+04/11/2026 18:59:59|EPNB - KM 4 - SENT NUCLEO BANDEIRANTE >> RIACHO FUNDO
+04/11/2026 18:40:36|EPTG - KM 8 - SENT PLANO PILOTO >> TAGUATINGA
+04/11/2026 07:10:29|EPTG - KM 8 - SENT TAGUATINGA >> PLANO PILOTO
+03/11/2026 18:54:28|EPNB - KM 4 - SENT NUCLEO BANDEIRANTE >> RIACHO FUNDO
+03/11/2026 18:31:19|EPTG - KM 8 - SENT PLANO PILOTO >> TAGUATINGA
+03/11/2026 07:29:50|EPTG - KM 8 - SENT TAGUATINGA >> PLANO PILOTO
+29/10/2026 19:12:50|BR-060 - KM 30 - SENT GOIANIA >> BRASILIA
+29/10/2026 13:28:02|BR-060 - KM 385 - RIO VERDE - SENT JATAI >> GOIANIA
+29/10/2026 02:55:26|BR-463 - KM 112 - SENT PONTA PORA >> DOURADOS
+28/10/2026 12:21:15|BR-463 - KM 112 - SENT DOURADOS >> PONTA PORA
+28/10/2026 01:10:47|BR-060 - KM 385 - RIO VERDE - SENT GOIANIA >> JATAI
+27/10/2026 19:58:33|BR-060 - KM 30 - SENT BRASILIA >> GOIANIA
+27/10/2026 19:12:08|EPNB - KM 4 - SENT NUCLEO BANDEIRANTE >> RIACHO FUNDO
+26/10/2026 18:42:49|EPTG - KM 8 - SENT PLANO PILOTO >> TAGUATINGA
+26/10/2026 07:11:01|EPTG - KM 8 - SENT TAGUATINGA >> PLANO PILOTO
+23/10/2026 18:21:32|EPTG - KM 8 - SENT PLANO PILOTO >> TAGUATINGA
+23/10/2026 07:13:52|EPTG - KM 8 - SENT TAGUATINGA >> PLANO PILOTO
+22/10/2026 18:24:49|EPNB - KM 4 - SENT NUCLEO BANDEIRANTE >> RIACHO FUNDO
+22/10/2026 18:06:45|EPTG - KM 8 - SENT PLANO PILOTO >> TAGUATINGA
+22/10/2026 07:24:55|EPTG - KM 8 - SENT TAGUATINGA >> PLANO PILOTO
+21/10/2026 18:59:04|EPNB - KM 4 - SENT NUCLEO BANDEIRANTE >> RIACHO FUNDO
+21/10/2026 18:45:01|EPTG - KM 8 - SENT PLANO PILOTO >> TAGUATINGA
+21/10/2026 07:05:41|EPTG - KM 8 - SENT TAGUATINGA >> PLANO PILOTO
+19/10/2026 18:55:06|EPNB - KM 4 - SENT NUCLEO BANDEIRANTE >> RIACHO FUNDO
+19/10/2026 18:37:56|EPTG - KM 8 - SENT PLANO PILOTO >> TAGUATINGA
+19/10/2026 07:44:46|EPTG - KM 8 - SENT TAGUATINGA >> PLANO PILOTO
+15/10/2026 20:05:44|BR-060 - KM 30 - SENT GOIANIA >> BRASILIA
+15/10/2026 14:21:40|BR-060 - KM 385 - RIO VERDE - SENT JATAI >> GOIANIA
+15/10/2026 03:40:18|BR-463 - KM 112 - SENT PONTA PORA >> DOURADOS
+14/10/2026 13:02:51|BR-463 - KM 112 - SENT DOURADOS >> PONTA PORA
+14/10/2026 01:44:30|BR-060 - KM 385 - RIO VERDE - SENT GOIANIA >> JATAI
+13/10/2026 20:25:12|BR-060 - KM 30 - SENT BRASILIA >> GOIANIA
+13/10/2026 19:41:17|EPNB - KM 4 - SENT NUCLEO BANDEIRANTE >> RIACHO FUNDO
+12/10/2026 18:13:33|EPTG - KM 8 - SENT PLANO PILOTO >> TAGUATINGA
+12/10/2026 07:21:37|EPTG - KM 8 - SENT TAGUATINGA >> PLANO PILOTO
+09/10/2026 18:11:43|EPTG - KM 8 - SENT PLANO PILOTO >> TAGUATINGA
+09/10/2026 07:21:41|EPTG - KM 8 - SENT TAGUATINGA >> PLANO PILOTO`;
+let SIM=null, simLast=null;
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function simBuild(){
+  if(SIM)return SIM;
+  const demoRows=[], taken=new Set();
+  Object.values(DEMO).forEach(txt=>txt.split(/\r?\n/).slice(1).forEach(l=>{
+    const c=l.split(';');if(c.length<9)return;
+    demoRows.push({p:c[0],m:c[1],a:c[2],c:c[3],mu:c[4],u:c[5],t:tparse(c[6]),loc:c[7]});taken.add(c[0]);
+  }));
+  // A volta da SGX4D17 por Rio Verde, que só aparece no histórico do veículo
+  const sgx=demoRows.find(r=>r.p==='SGX4D17');
+  demoRows.push({...sgx,t:Date.UTC(2026,10,12,13,52)/MIN,loc:'BR-060 - KM 385 - RIO VERDE - SENT JATAI >> GOIANIA'});
+  const L='ABCDEFGHIJKLMNOPQRSTUVWXYZ', pools={};
+  Object.keys(SIM_MUN).forEach((k,ki)=>{
+    const r=rng(101+ki), n={df:2400,rv:1400,ms:1600}[k], out=[];
+    const ch=s=>s[Math.floor(r()*s.length)];
+    while(out.length<n){
+      const merc=r()<.7, p=ch(L)+ch(L)+ch(L)+Math.floor(r()*10)+(merc?ch(L):Math.floor(r()*10))+Math.floor(r()*10)+Math.floor(r()*10);
+      if(taken.has(p))continue;taken.add(p);
+      const blank=r()<.05, [mu,u]=ch(SIM_MUN[k]).split('/');
+      out.push(blank?{p,m:'',a:'',c:'',mu:'',u:''}:{p,m:ch(SIM_MOD),a:String(2008+Math.floor(r()*19)),c:ch(SIM_COR),mu,u});
+    }
+    pools[k]=out;
+  });
+  const by={};
+  SIM_CAMS.forEach((cam,ci)=>{
+    const rows=by[cam.loc]=[];
+    if(cam.pool){
+      const r=rng(7+ci), pool=pools[cam.pool];
+      // Intervalo entre passagens: de 1 min até 5–9 min conforme a hora (madrugada mais vazia)
+      for(let t=SIM_D0+Math.floor(r()*4);t<SIM_D1;){
+        const h=Math.floor((t-SIM_D0)/60)%24, max=h<5?9:h<7||h>=20?7:cam.day;
+        const v=pool[Math.floor(r()*pool.length)];rows.push({...v,t,loc:cam.loc});
+        if(r()<.15){const w=pool[Math.floor(r()*pool.length)];rows.push({...w,t,loc:cam.loc})}
+        t+=1+Math.floor(r()*max);
+      }
+    }
+    demoRows.filter(x=>x.loc===cam.loc).forEach(x=>rows.push(x));
+    rows.sort((a,b)=>a.t-b.t||(a.p<b.p?-1:1));
+  });
+  return SIM=by;
+}
+function simCsv(rows){
+  return 'Placa;MarcaModelo;AnoModelo;Cor;MunicioEmplacamento;UfEmplacamento;DataHoraPassagem;Local;Situacao\r\n'+
+    rows.map(r=>[r.p,r.m,r.a,r.c,r.mu,r.u,iso(r.t).replace(' ','T')+':00',r.loc,'SEM RESTRICAO'].join(';')).join('\r\n')+'\r\n';
+}
+const simSlug=s=>s.normalize('NFD').replace(/[^\w]+/g,'_').replace(/^_|_$/g,'');
+function simMsg(id,html,kind){const m=$(id);m.innerHTML=html?`<span>${html}</span>`:'';m.className='fmsg'+(kind?' '+kind:'');m.hidden=!html}
+$('s-cam').insertAdjacentHTML('beforeend',SIM_CAMS.map(c=>`<option>${esc(c.loc)}</option>`).join(''));
+function simQuery(){
+  const loc=$('s-cam').value, day=$('s-day').value, h0=$('s-h0').value, h1=$('s-h1').value;
+  $('s-res').hidden=true;simLast=null;
+  ['s-cam','s-day','s-h0','s-h1'].forEach(id=>$(id).removeAttribute('aria-invalid'));
+  const bad=(id,t)=>{$(id).setAttribute('aria-invalid','true');simMsg('s-msg',t,'err');$(id).focus()};
+  if(!loc)return bad('s-cam','Escolha a câmera.');
+  const d0=tparse(day+' 00:00');
+  if(isNaN(d0))return bad('s-day','Preencha a data.');
+  if(d0<SIM_D0||d0>=SIM_D1)return bad('s-day','O simulador só tem passagens de <b>10 a 13/11/2026</b>, os dias do Caso 1.');
+  const t0=tparse(day+' '+h0), t1=tparse(day+' '+h1);
+  if(isNaN(t0))return bad('s-h0','Preencha a hora inicial.');
+  if(isNaN(t1))return bad('s-h1','Preencha a hora final.');
+  if(t1<t0)return bad('s-h1','A hora final está antes da inicial. Uma consulta tem uma data só: se a janela passa da meia-noite, consulte até <b>23:59</b> e depois faça outra consulta a partir de <b>00:00</b> do dia seguinte.');
+  const rows=simBuild()[loc].filter(r=>r.t>=t0&&r.t<=t1);
+  const name=`simulado_${simSlug(loc)}_${day}_${h0.replace(':','')}-${h1.replace(':','')}.csv`;
+  simLast={rows,name,loc,t0,t1};
+  const nPl=new Set(rows.map(r=>r.p)).size;
+  if(!rows.length){simMsg('s-msg',`Nenhuma passagem em <b>${esc(loc)}</b> de ${fmt(t0)} a ${hh(t1)}. Confira a câmera, o sentido e o horário.`,'');say('Nenhuma passagem.');return}
+  simMsg('s-msg','');
+  $('s-sum').innerHTML=`<b>${n2(rows.length)} ${pl(rows.length,'passagem','passagens')}</b>, ${n2(nPl)} ${pl(nPl,'placa','placas')} · ${fmt(t0)} a ${hh(t1)}<br><span class="cam">${esc(loc)}</span>`;
+  const SHOW=150;
+  $('s-tbl').innerHTML='<thead><tr><th>Placa</th><th>Modelo</th><th>Cor</th><th>Emplacamento</th><th>Data e hora</th></tr></thead><tbody>'+
+    rows.slice(0,SHOW).map(r=>`<tr><td>${esc(r.p)}</td><td>${esc(r.m)}</td><td>${esc(r.c)}</td><td>${r.mu?esc(r.mu+'/'+r.u):''}</td><td class="dt">${fmt(r.t)}</td></tr>`).join('')+'</tbody>';
+  $('s-more').hidden=rows.length<=SHOW;
+  $('s-more').textContent=`A tabela mostra as ${SHOW} primeiras. O arquivo leva todas as ${n2(rows.length)}.`;
+  $('s-res').hidden=false;$('s-send').textContent='Mandar para o Cruzador';$('s-send').disabled=false;
+  say(`${rows.length} passagens encontradas.`);
+}
+$('simq').onsubmit=e=>{e.preventDefault();simQuery()};
+$('s-csv').onclick=()=>{
+  if(!simLast)return;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+simCsv(simLast.rows)],{type:'text/csv;charset=utf-8'}));
+  a.download=simLast.name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+};
+$('s-send').onclick=async()=>{
+  if(!simLast)return;
+  await addFiles([new File([simCsv(simLast.rows)],simLast.name,{type:'text/csv'})]);
+  const n=pts.length;
+  $('s-send').textContent='Mandado';$('s-send').disabled=true;
+  simMsg('s-msg',`Arquivo mandado. O Cruzador tem ${n} ${pl(n,'ponto','pontos')} agora. Faça a próxima consulta ou <button class="btn sm" type="button" id="s-gocru">abra o Cruzador</button>`,'');
+  $('s-gocru').onclick=()=>tab('t-cru',true);
+};
+// Histórico do veículo
+function simHist(pl){
+  if(pl==='SGX4D17'){
+    const v=simBuild()['BR-060 - KM 30 - SENT BRASILIA >> GOIANIA'].find(r=>r.p===pl);
+    return {v,rows:SIM_HIST.split('\n').map(l=>{const[d,loc]=l.split('|');return{t:tparse(d),s:d.slice(17,19),loc}})};
+  }
+  const all=[];Object.values(simBuild()).forEach(rs=>rs.forEach(r=>{if(r.p===pl)all.push(r)}));
+  all.sort((a,b)=>b.t-a.t);
+  return {v:all[0],rows:all.map(r=>({t:r.t,s:'',loc:r.loc}))};
+}
+$('vq').onsubmit=e=>{
+  e.preventDefault();
+  const pl=norm($('v-pl').value);$('v-res').hidden=true;
+  if(!pl){simMsg('v-msg','Digite a placa.','err');$('v-pl').focus();return}
+  const h=simHist(pl);
+  if(!h.rows.length){simMsg('v-msg',`Nenhuma passagem da placa <b>${esc(pl)}</b> no simulador.`,'');say('Nenhuma passagem.');return}
+  simMsg('v-msg','');
+  const v=h.v||{};
+  $('v-car').innerHTML=`<b class="pl">${esc(pl)}</b> · ${v.m?esc(`${v.m} · ${v.a} · ${v.c} · ${v.mu}/${v.u}`):'sem dados de cadastro'} · ${n2(h.rows.length)} ${pl2(h.rows.length)}`;
+  $('v-tbl').innerHTML='<thead><tr><th>Data e hora</th><th>Local</th></tr></thead><tbody>'+
+    h.rows.map(r=>`<tr${r.t>=SIM_D0&&r.t<SIM_D1?' class="hit"':''}><td class="dt">${ddy(r.t)} ${hh(r.t)}${r.s?':'+r.s:''}</td><td>${esc(r.loc)}</td></tr>`).join('')+'</tbody>';
+  $('v-res').hidden=false;say(`${h.rows.length} passagens.`);
+};
+function pl2(n){return pl(n,'passagem','passagens')}
+// Gabarito (só com #professor)
+const GAB=[
+  ['P1 · Saída do DF',0,[['2026-11-10','18:00','23:59']]],
+  ['P2 · Rio Verde (ida)',3,[['2026-11-10','23:39','23:59'],['2026-11-11','00:00','07:39']]],
+  ['P3 · Chegada à fronteira',5,[['2026-11-11','12:05','23:59'],['2026-11-12','00:00','00:05']]],
+  ['P4 · Saída da fronteira',6,[['2026-11-11','12:05','23:59'],['2026-11-12','00:00','12:05']]],
+  ['P5 · Volta ao DF',1,[['2026-11-12','06:10','23:59'],['2026-11-13','00:00','12:10']]]];
+function simFill(ci,q){$('s-cam').value=SIM_CAMS[ci].loc;[$('s-day').value,$('s-h0').value,$('s-h1').value]=q;simQuery();$('m1').scrollIntoView({block:'start',behavior:reduce()?'auto':'smooth'})}
+function profMode(){
+  const on=location.hash==='#professor';
+  $('gab').hidden=!on;$('demo').hidden=!on;$('c-demo').hidden=!on;
+  if(on&&!$('g-tbl').innerHTML)$('g-tbl').innerHTML='<thead><tr><th>Ponto</th><th>Câmera</th><th>Consultas</th></tr></thead><tbody>'+
+    GAB.map(([n,ci,qs],i)=>`<tr><td><b>${n}</b></td><td>${esc(SIM_CAMS[ci].loc)}</td><td>${qs.map((q,j)=>`<button class="btn sm" type="button" data-g="${i}.${j}">${q[0].slice(8,10)}/11 ${q[1]} a ${q[2]}</button>`).join('')}</td></tr>`).join('')+'</tbody>';
+  return on;
+}
+$('g-tbl').addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;const[i,j]=b.dataset.g.split('.').map(Number);simFill(GAB[i][1],GAB[i][2][j])});
+window.addEventListener('hashchange',()=>{profMode();const t=HASHTAB[location.hash];if(t)tab(t)});
+const PROF=profMode();
 (function initC(){
   const s=load('cruzador.calc');
   if(s&&Array.isArray(s.cpts)){
     $('dep0').value=s.dep0||'';$('dep1').value=s.dep1||'';$('dname').value=s.dname||'';
     s.cpts.forEach(p=>cpts.push({name:String(p.name??''),h:String(p.h??''),m:String(p.m??''),folga:String(p.folga??'')}));
     cex=!!s.cex;$('cex').hidden=!cex;drawC();
-  }else demoC();
+  }else if(PROF)demoC();
+  else{cpts.push({name:'',h:'',m:'',folga:''});drawC()}
 })();
 </script>
 </body>

@@ -9,3 +9,10 @@ Você seleciona os CSVs da Consulta Radares, um por ponto da rota, e a página m
 - O botão **Usar exemplo (Caso 1)** carrega uma base **fictícia** de treino (corredor DF ↔ Ponta Porã, "bate e volta").
 
 **Não publique dados reais neste repositório.** Ele é público; aqui entram só a página e os dados fictícios do Caso 1.
+
+## Consulta simulada (treino)
+
+A aba 2 simula consultas de passagens com dados fictícios do Caso 1 (10 a 13/11/2026), para o aluno fazer o exercício do zero: calcular as janelas, consultar cada câmera, mandar os arquivos para o Cruzador e ver o histórico da placa. Não imita nenhum sistema real.
+
+- Link dos alunos: https://danillolandim.github.io/cruzador-de-placas/#simulador
+- Link do professor (mostra o gabarito e os botões de exemplo): https://danillolandim.github.io/cruzador-de-placas/#professor
