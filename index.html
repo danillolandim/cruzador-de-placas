@@ -432,7 +432,9 @@ let example=false, selPl=null, picked=false, R=null, upto=null, sortK='n', sortD
 
 /* ---------- Passo 1: rota e janelas ---------- */
 const stops=m=>Math.floor(m/180)*60; // 1 hora de parada a cada 3 horas completas de estrada
-function winOf(i){
+// Janela que termina exatamente à meia-noite termina às 23:59 do dia anterior, como a consulta no Córtex
+function winOf(i){const w=winRaw(i);if(w.ok&&w.e>w.s&&w.e%1440===0)w.e-=1;return w}
+function winRaw(i){
   const r=route[i], a=tparse(route[0].dep0), b=tparse(route[0].dep1), errs=[];
   if(i===0){
     if(isNaN(a)||isNaN(b)) return {ok:false,msg:'Preencha a primeira e a última saída.'};
