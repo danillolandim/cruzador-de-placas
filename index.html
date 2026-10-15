@@ -278,6 +278,8 @@ fieldset.fld legend{padding:0;margin-bottom:5px}
 .q .qv{font:500 1.375rem/1.15 var(--f-mono)}
 .when{margin:0;font-size:.84375rem;color:var(--mut);max-width:72ch}
 .when b{color:var(--ink);font-family:var(--f-mono);font-weight:500}
+.go-ok,.go-wait{display:inline-block;font-size:.75rem;font-weight:600;border-radius:99px;padding:2px 9px}
+.go-ok{color:var(--ok);background:var(--okbg)}.go-wait{color:var(--warn);background:var(--warnbg)}
 .split{display:inline-block;font-size:.75rem;font-weight:600;color:var(--warn);background:var(--warnbg);border-radius:99px;padding:2px 9px;margin-right:6px}
 .cnote{font-size:.84375rem;color:var(--mut);margin:14px 0 0;max-width:72ch}
 @media (max-width:640px){
@@ -352,7 +354,7 @@ fieldset.fld legend{padding:0;margin-bottom:5px}
 <section class="panel" aria-labelledby="c3">
   <div class="ph"><h2 id="c3">Consultas para o Córtex</h2><button class="btn sm" id="copy" type="button">Copiar consultas</button></div>
   <ol class="wins" id="wins"></ol>
-  <p class="cnote">O Córtex 1.0 aceita uma data por consulta: janela que passa da meia-noite vira duas consultas na mesma câmera. Carregue as duas no Cruzador, que junta as duas num ponto só. As passagens chegam em lotes, com 1 a 2 horas de atraso: consulte depois do horário indicado.</p>
+  <p class="cnote">O Córtex 1.0 aceita uma data por consulta: janela que passa da meia-noite vira duas consultas na mesma câmera. Carregue as duas no Cruzador, que junta as duas num ponto só. As passagens chegam ao Córtex em lotes, com 1 a 2 horas de atraso: cada ponto mostra a partir de que horas a consulta já traz tudo.</p>
 </section>
 </div>
 
@@ -820,12 +822,20 @@ function queries(s,e){
   if(out.length>1&&out[out.length-1][0]===out[out.length-1][1])out.pop();
   return out;
 }
+// Agora na hora de Brasília (UTC−3, sem horário de verão), em minutos, na mesma escala de tparse
+function nowBR(){return Math.floor(Date.now()/MIN)-180}
+// Quando a consulta pode ser feita: o Córtex recebe as passagens com 1 a 2 horas de atraso
+function ready(t){
+  const left=t-nowBR();
+  return `Faça a consulta no Córtex a partir de <b>${dd(t)} ${hh(t)}</b>; antes disso, as passagens podem ainda não ter chegado.`+
+    (left<=0?' <span class="go-ok">Já pode consultar.</span>':` <span class="go-wait">Ainda não: faltam ${hm(left)}.</span>`);
+}
 function winHtml(no,name,info,s,e,late){
   const qs=queries(s,e); e=qs[qs.length-1][1];
   copyLines.push(`P${no} ${name}: `+qs.map(([x,y])=>`${ddy(x)} ${hh(x)} às ${hh(y)}`).join(' | '));
   return `<li class="win"><div class="wh"><span class="pm" aria-hidden="true">P${no}</span><span class="nm"><span class="sr">P${no} </span>${esc(name)}</span><span class="tt">${info}</span></div>
     <ol class="qs">${qs.map(([x,y],k)=>`<li class="q"><span class="ql">${qs.length>1?`Consulta ${k+1} de ${qs.length}`:'Consulta'}</span><span class="qd">${ddy(x)}</span><span class="qv">${hh(x)} às ${hh(y)}</span></li>`).join('')}</ol>
-    <p class="when">${qs.length>1?`<span class="split">Passa da meia-noite: ${qs.length} consultas na mesma câmera</span>`:''}Janela completa: <b>${dd(s)} ${hh(s)}</b> até <b>${dd(e)} ${hh(e)}</b>.${late?` Consulte depois de <b>${dd(e+120)} ${hh(e+120)}</b>, por causa do atraso do Córtex.`:''}</p></li>`;
+    <p class="when">${qs.length>1?`<span class="split">Passa da meia-noite: ${qs.length} consultas na mesma câmera</span>`:''}Janela do ponto: <b>${dd(s)} ${hh(s)}</b> até <b>${dd(e)} ${hh(e)}</b>.${late?' '+ready(e+120):''}</p></li>`;
 }
 let calcSayT;
 function calc(){
